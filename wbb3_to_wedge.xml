@@ -280,7 +280,7 @@
 				trim($row['body'])
 			);
 		</preparsecode>
-		<query>
+		<query><![CDATA[
 			SELECT
 				p.postID AS id_msg, p.threadID AS id_topic, t.boardID AS id_board,
 				p.time AS poster_time, p.userID AS id_member,
@@ -294,7 +294,7 @@
 			FROM {$from_prefix}{$wbb_prefix}post AS p
 				INNER JOIN {$from_prefix}{$wbb_prefix}thread AS t ON (t.threadID = p.threadID)
 				LEFT JOIN {$from_prefix}{$wcf_prefix}user AS u ON (u.userID = p.userID);
-		</query>
+		]]></query>
 	</step>
 	<step>
 		<title>Importing polls</title>

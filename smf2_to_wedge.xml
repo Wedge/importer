@@ -57,7 +57,7 @@
 		<presql>TRUNCATE {$to_prefix}boards;</presql>
 		<preparsecode>
 			$row['url'] = $this->boardurl . '/board' . $row['url'];
-			
+
 			$permissions = explode(',', $row['member_groups']);
 			foreach ($permissions as $allowed)
 				$db->query("

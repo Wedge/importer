@@ -10,13 +10,13 @@
  *
  * @version 0.1
  */
- 
+
 // Buy some time
 @set_time_limit(600);
 
 //Try to set our error- and exception handlers.
 @set_exception_handler(array('import_exception', 'exception_handler'));
-@set_error_handler(array('import_exception', 'error_handler_callback'), E_ALL); 
+@set_error_handler(array('import_exception', 'error_handler_callback'), E_ALL);
 
 //Load the language file and create an importer cookie.
 lng::loadLang();
@@ -42,7 +42,7 @@ $template->footer();
 
 
 /**
- * Object weimp creates the main XML object 
+ * Object weimp creates the main XML object
  *
  */
 class Importer
@@ -56,7 +56,7 @@ class Importer
 
 	private $ignore = true;
 	private $replace = false;
-	
+
 	public function __construct()
 	{
 		// Save here so it doesn't get overwritten when sessions are restarted.
@@ -399,7 +399,7 @@ class Importer
 
 		$cookie -> destroy();
 		unset($_SESSION['import_steps']);
-		
+
 		if ($this->detect_scripts())
 			return true;
 
@@ -490,7 +490,7 @@ class Importer
 				$detect = helper::fix_params($detect);
 				$count = strtr($detect, array('{$from_prefix}' => $this->from_prefix, '{$to_prefix}' => $this->to_prefix));
 				$table_test = $db->query("
-					SELECT COUNT(*) 
+					SELECT COUNT(*)
 					FROM $count", true);
 
 				if ($table_test === false)
@@ -524,7 +524,7 @@ class Importer
 					foreach ($presql_array as $exec)
 						$db->query($exec . ';');
 				}
-				else 
+				else
 					$db->query($presql);
 				//don't do this twice..
 				$_SESSION['import_steps'][$substep]['presql'] = true;
@@ -726,7 +726,7 @@ class Importer
 		$_GET['step'] = '2';
 
 		$template->step2();
-		
+
 		if ($_GET['substep'] <= 0)
 		{
 			// Get all members with wrong number of personal messages.
@@ -1332,7 +1332,7 @@ class Importer
 		global $db, $template, $boardurl;
 
 		$to_prefix = $this->to_prefix;
-		
+
 		// add some importer information.
 		$db->query("
 			REPLACE INTO {$to_prefix}settings (variable, value)
@@ -1382,7 +1382,7 @@ abstract class helper
 		$template->footer();
 		exit;
 	}
-	
+
 	/**
 	* helper function for old attachments
 	*
@@ -1401,7 +1401,7 @@ abstract class helper
 
 		return $attachment_id . '_' . strtr($clean_name, '.', '_') . md5($clean_name);
 	}
-	
+
 	public static function fix_params($string)
 	{
 		if (isset($_SESSION['import_parameters']))
@@ -1414,7 +1414,7 @@ abstract class helper
 		}
 		return $string;
 	}
-	
+
 	/**
 	* // Add slashes recursively...
 	*
@@ -1746,11 +1746,11 @@ class Database
 *
 *	array Charset::fix (string data or array)
 *		- this function can convert an array recursively to utf-8
-*		- The input can have mixed encodings.  
+*		- The input can have mixed encodings.
 *
 *	bool Charset::is_utf8(string data)
 *		- returns whether the string is already utf8 or not
-*/ 
+*/
 class Charset
 {
 	// simple function to detect whether a string is utf-8 or not
@@ -1772,7 +1772,7 @@ class Charset
 	*    are followed by any of these:  ("group B")
 	*                                    ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶•¸¹º»¼½¾¿
 	* For example:   %ABREPRESENT%C9%BB. «REPRESENTÉ»
-	* The "«" (%AB) character will be converted, but the "É" followed by "»" (%C9%BB) 
+	* The "«" (%AB) character will be converted, but the "É" followed by "»" (%C9%BB)
 	* is also a valid unicode character, and will be left unchanged.
 	*
 	* 2) when any of these: àáâãäåæçèéêëìíîï  are followed by TWO chars from group B,
@@ -1783,7 +1783,7 @@ class Charset
 	* @return string  The same string, UTF8 encoded
 	*
 	*/
-	
+
 		if(is_array($text))
 		{
 			foreach($text as $k => $v)
@@ -1797,7 +1797,7 @@ class Charset
 
 		$max = strlen($text);
 		$buf = '';
-		
+
 		for($i = 0; $i < $max; $i++)
 		{
 			$c1 = $text{$i};
@@ -1823,12 +1823,12 @@ class Charset
 						$cc2 = ($c1 & "\x3f") | "\x80";
 						$buf .= $cc1 . $cc2;
 					}
-				} 
+				}
 				elseif($c1 >= "\xe0" & $c1 <= "\xef")
 				{
 					//looks like 3 bytes UTF8
 					if($c2 >= "\x80" && $c2 <= "\xbf" && $c3 >= "\x80" && $c3 <= "\xbf")
-					{ 
+					{
 						//yeah, almost sure it's UTF8 already
 						$buf .= $c1 . $c2 . $c3;
 						$i = $i + 2;
@@ -1840,32 +1840,32 @@ class Charset
 						$cc2 = ($c1 & "\x3f") | "\x80";
 						$buf .= $cc1 . $cc2;
 					}
-				} 
+				}
 				elseif($c1 >= "\xf0" & $c1 <= "\xf7")
-				{ 
+				{
 					//looks like 4 bytes UTF8
 					if($c2 >= "\x80" && $c2 <= "\xbf" && $c3 >= "\x80" && $c3 <= "\xbf" && $c4 >= "\x80" && $c4 <= "\xbf")
 					{
 						//yeah, almost sure it's UTF8 already
 						$buf .= $c1 . $c2 . $c3;
 						$i = $i + 2;
-					} 
-					else 
-					{ 
+					}
+					else
+					{
 						//not valid UTF8.  Convert it.
 						$cc1 = (chr(ord($c1) / 64) | "\xc0");
 						$cc2 = ($c1 & "\x3f") | "\x80";
 						$buf .= $cc1 . $cc2;
 					}
-				} 
-				else 
+				}
+				else
 				{
 					//doesn't look like UTF8, but should be converted
 					$cc1 = (chr(ord($c1) / 64) | "\xc0");
 					$cc2 = (($c1 & "\x3f") | "\x80");
 					$buf .= $cc1 . $cc2;
 				}
-			} 
+			}
 			elseif(($c1 & "\xc0") == "\x80")
 			{
 				// needs conversion
@@ -1877,7 +1877,7 @@ class Charset
 				// it doesn't need convesion
 				$buf .= $c1;
 		}
-		//surprise, surprise... the string 
+		//surprise, surprise... the string
 		return $buf;
 	}
 }
@@ -1890,20 +1890,20 @@ class Charset
 class lng
 {
 	private static $lang = array();
-	
+
 	/**
 	* Adds a new variable to the lang.
 	*
 	* @param string $key Name of the variable
 	* @param mixed $value Value of the variable
 	* @throws Exception
-	* @return bool 
+	* @return bool
 	*/
 	public static function set($key, $value)
 	{
 		try
 		{
-				if (!self::has($key)) 
+				if (!self::has($key))
 				{
 					self::$lang[$key] = $value;
 					return true;
@@ -1961,9 +1961,9 @@ class lng
 	*/
 	public static function has($key)
 	{
-		if (isset(self::$lang[$key])) 
+		if (isset(self::$lang[$key]))
 			return true;
- 
+
 		return false;
 	}
 
@@ -1998,7 +1998,7 @@ class lng
 			// break up string into pieces (languages and q factors)
 			preg_match_all('/([a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i', strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE']), $lang_parse);
 
-			if (count($lang_parse[1])) 
+			if (count($lang_parse[1]))
 			{
 				// create a list like "en" => 0.8
 				$prefered = array_combine($lang_parse[1], $lang_parse[4]);
@@ -2078,14 +2078,14 @@ class template
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<title>', isset($import->xml->general->name) ? $import->xml->general->name . ' to ' : '', 'Wedge Importer</title>
 		<script type="text/javascript">
 			function AJAXCall(url, callback, string) {
 				var req = init();
 				var string = string;
 				req.onreadystatechange = processRequest;
-        
+
 				function init() {
 					if (window.XMLHttpRequest) {
 						return new XMLHttpRequest();
@@ -2112,18 +2112,18 @@ class template
 			}
 
 			function validateField(string) {
-				var target = document.getElementById(string); 
+				var target = document.getElementById(string);
 				var from = "', isset($import->xml->general->settings) ? $import->xml->general->settings : 'null', '";
 				var to = "/Settings.php";
-				
+
 				if(string == "path_to")
 					extend = to;
 				else
 					extend = from;
 
-				var url = "import.php?xml=true&"+ string + "=" + target.value + extend; 
-				var ajax = new AJAXCall(url, validateCallback, string); 
-				ajax.doGet(); 
+				var url = "import.php?xml=true&"+ string + "=" + target.value + extend;
+				var ajax = new AJAXCall(url, validateCallback, string);
+				ajax.doGet();
 			}
 
 			function validateCallback(responseXML, string) {
@@ -2256,18 +2256,18 @@ class template
 			}
 			#progressbar
 			{
-				position: relative; 
-				top: -28px; 
-				left: 255px; 
-				width: 300px; 
-				height: 0.7em; 
-				background-color: white; 
+				position: relative;
+				top: -28px;
+				left: 255px;
+				width: 300px;
+				height: 0.7em;
+				background-color: white;
 				border-radius: 4px;
 				border: 1px solid #ddd;
 			}
 			#inner_bar
 			{
-				background-color: orange; 
+				background-color: orange;
 				height: 0.7em;
 				border-bottom-left-radius: 4px;
 				border-top-left-radius: 4px;
@@ -2488,7 +2488,7 @@ class template
 
 		if ($status == 3)
 			echo '<span style="color: red;">&#x2718</span> (', lng::get('we.imp.not_found_skipped'),')';
-		
+
 		if ($status != 0)
 			echo '<br />';
 	}
@@ -2552,7 +2552,7 @@ class template
 			<script type="text/javascript"><!-- // --><![CDATA[
 				var countdown = 3;
 				window.onload = doAutoSubmit;
-				
+
 				function doAutoSubmit()
 				{
 					if (countdown == 0)
@@ -2574,7 +2574,7 @@ class template
 
 		if(isset($_GET['doStep']) && isset($_GET['bypass']))
 		{
-			$temp = unserialize($_GET['bypass']); 
+			$temp = unserialize($_GET['bypass']);
 			foreach ($temp as $key => $value)
 				$_SESSION[$key] = $value;
 
@@ -2600,7 +2600,7 @@ class template
 
 	public function ajax_importer()
 	{
-	
+
 	echo '
 		<div id="ajax_progress"></div>
 			<script type="text/javascript">
@@ -2610,14 +2610,14 @@ class template
 				var myelement = \'ajax_progress\';
 				var json;
 
-				function createRequestObject() 
+				function createRequestObject()
 				{
 					var req;
 
 					if(window.XMLHttpRequest)
 						req = new XMLHttpRequest();
 
-					else if(window.ActiveXObject) 
+					else if(window.ActiveXObject)
 						req = new ActiveXObject("Microsoft.XMLHTTP");
 
 					return req;
@@ -2626,7 +2626,7 @@ class template
 				// Make the XMLHttpRequest object
 				var http = createRequestObject();
 
-				function sendRequest(page) 
+				function sendRequest(page)
 				{
 					http.open(\'get\', page);
 					http.onreadystatechange = handleResponse;
@@ -2651,11 +2651,11 @@ class template
 
 				function loop()
 				{
-					sendRequest(file +json); 
+					sendRequest(file +json);
 					setTimeout("loop()", interval);
 				}
 
-				window.onload = function() 
+				window.onload = function()
 				{
 					loop();
 				}
@@ -2664,11 +2664,11 @@ class template
 }
 
 /**
-* class import_exception extends the build-in Exception class and 
+* class import_exception extends the build-in Exception class and
 * catches potential errors
 */
 class import_exception extends Exception
-{ 
+{
 	public static function error_handler_callback($code, $string, $file, $line, $context)
 	{
 		$e = new self($string, $code);
@@ -2676,7 +2676,7 @@ class import_exception extends Exception
 		$e->file = $file;
 		throw $e;
 	}
-	
+
 	public static function exception_handler($exception)
 	{
 		global $template, $import;
