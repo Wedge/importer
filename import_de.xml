@@ -38,11 +38,11 @@
 	<item name="we.imp.recalculate"><![CDATA[Berechne Foren-Statistiken]]></item>
 	<item name="we.imp.importing"><![CDATA[Importiere]]></item>
 	<item name="we.imp.complete"><![CDATA[Import erfolgreich!]]></item>
-	<item name="we.imp.congrats"><![CDATA[Glückwunsch, der Daten-Import ist erfolgreich gewesen. If you have or had any problems with this importer, or need help using Wedge, please feel free to <a href="http://wedge.org">look to us for support</a>.]]></item>
-	<item name="we.imp.check_box"><![CDATA[Please check this box to delete the importer right now for security reasons.]]></item>
+	<item name="we.imp.congrats"><![CDATA[Glückwunsch, der Daten-Import ist erfolgreich gewesen. Wenn du Probleme mit dem Importer hattest oder Hilfe bei der Einrichtung von Wedge benötigst, kannst du hier <a href="http://wedge.org">nach Hilfe suchen</a>.]]></item>
+	<item name="we.imp.check_box"><![CDATA[Diese Box markieren und die Import-Dateien löschen (aus Sicherheitsgründen dringend empfohlen.]]></item>
 	<item name="we.imp.may_fail"><![CDATA[funktiert nicht auf allen Servern.]]></item>
 	<item name="we.imp.not_done"><![CDATA[Noch nicht fertig!]]></item>
 	<item name="we.imp.importer_paused"><![CDATA[Der Import-Vorgang wurde für ein paar Sekunden unterbrochen um eine Überlast des Webservers zu verhindern. Kein Grund zur Sorge, <b>es geht gleich weiter</b>.]]></item>
-	<item name="we.imp.all_imported"><![CDATA[Now that everything is imported, your Wedge installation should have all the data from the %s installation.]]></item>
-	<item name="we.imp.smooth_transition"><![CDATA[We hope you had a smooth transition!]]></item>
+	<item name="we.imp.all_imported"><![CDATA[Wedge sollte jetzt alle Daten deiner %s Installation beinhalten.]]></item>
+	<item name="we.imp.smooth_transition"><![CDATA[Wir hoffen, daß der Import ohne Probleme verlief!]]></item>
 </lang>
