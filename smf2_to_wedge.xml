@@ -58,13 +58,16 @@
 		<preparsecode>
 			$row['url'] = $this->boardurl . '/board' . $row['url'];
 
-			$permissions = explode(',', $row['member_groups']);
-			foreach ($permissions as $allowed)
-				$db->query("
-					REPLACE INTO {$to_prefix}board_groups
-						(id_group, id_board, view_perm, enter_perm)
-					VALUES($allowed, $row[id_board], 'allow', 'allow')
-				");
+			if (!empty($row['member_groups']))
+			{
+				$permissions = explode(',', $row['member_groups']);
+				foreach ($permissions as $allowed)
+					$db->query("
+						REPLACE INTO {$to_prefix}board_groups
+							(id_group, id_board, view_perm, enter_perm)
+						VALUES ($allowed, $row[id_board], 'allow', 'allow')
+					");
+			}
 		</preparsecode>
 		<query>
 				SELECT
@@ -235,7 +238,8 @@
 		</options>
 		<query>
 				SELECT
-					*
+					id_group, group_name, description, online_color, min_posts,
+					max_messages, stars, group_type, hidden, id_parent
 				FROM {$from_prefix}membergroups;
 		</query>
 	</step>
