@@ -431,4 +431,27 @@
 			FROM {$from_prefix}{$wcf_prefix}pm_to_user;
 		</query>
 	</step>
+	<step>
+		<title>Importing topic notifications</title>
+		<detect>$from_prefix}{$wbb_prefix}thread_subscription</detect>
+		<destination>{$to_prefix}log_notify</destination>
+		<presql>
+			TRUNCATE {$to_prefix}log_notify;
+		</presql>
+		<query>
+			SELECT
+				userID AS id_member, threadID AS id_topic
+			FROM {$from_prefix}{$wbb_prefix}thread_subscription;
+		</query>
+	</step>
+	<step>
+		<title>Importing board notifications</title>
+		<detect>$from_prefix}{$wbb_prefix}board_subscription</detect>
+		<destination>{$to_prefix}log_notify</destination>
+		<query>
+			SELECT
+				userID AS id_member, boardID AS id_board
+			FROM {$from_prefix}{$wbb_prefix}board_subscription;
+		</query>
+	</step>
 </importer>
