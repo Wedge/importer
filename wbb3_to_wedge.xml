@@ -21,9 +21,10 @@
 			$request = $db->query("
 				SELECT optionName, optionID
 				FROM{$from_prefix}{$wcf_prefix}user_option");
-					while ($wbbOpt = $db->fetch_assoc($request))
-						$userOptions[$wbbOpt['optionName']]= $wbbOpt['optionID'];
-				$db->free_result($request);
+			
+			while ($wbbOpt = $db->fetch_assoc($request))
+				$userOptions[$wbbOpt['optionName']]= $wbbOpt['optionID'];
+			$db->free_result($request);
 		</code>
 	</step>
 	<step type="mandatory">
@@ -44,91 +45,91 @@
 				FROM {$from_prefix}{$wcf_prefix}user_to_groups
 				WHERE userID = $row[id_member]");
 
-				while ($groups = $db->fetch_assoc($request))
-				{
-					if (in_array('4', $groups))
-						$row['id_group'] = '1';
-					elseif (in_array('5', $groups))
-						$row['id_group'] = '2';
-					elseif (in_array('6', $groups))
+			while ($groups = $db->fetch_assoc($request))
+			{
+				if (in_array('4', $groups))
+					$row['id_group'] = '1';
+				elseif (in_array('5', $groups))
 					$row['id_group'] = '2';
-				}
-				$db->free_result($request);
+				elseif (in_array('6', $groups))
+					$row['id_group'] = '2';
+			}
+			$db->free_result($request);
 
-				$row['signature'] = preg_replace(
-					array(
-						'~\[size=(.+?)\]~is',
-						'~\[align=left\](.+?)\[\/align\]~is',
-						'~\[align=right\](.+?)\[\/align\]~is',
-						'~\[align=center\](.+?)\[\/align\]~is',
-						'~\[align=justify\](.+?)\[\/align\]~is',
-						'~.Geneva, Arial, Helvetica, sans-serif.~is',
-						'~.Tahoma, Arial, Helvetica, sans-serif.~is',
-						'~.Arial, Helvetica, sans-serif.~is',
-						'~.Chicago, Impact, Compacta, sans-serif.~is',
-						'~.Comic Sans MS, sans-serif.~is',
-						'~.Courier New, Courier, mono.~is',
-						'~.Georgia, Times New Roman, Times, serif.~is',
-						'~.Helvetica, Verdana, sans-serif.~is',
-						'~.Impact, Compacta, Chicago, sans-serif.~is',
-						'~.Lucida Sans, Monaco, Geneva, sans-serif.~is',
-						'~.Times New Roman, Times, Georgia, serif.~is',
-						'~.Trebuchet MS, Arial, sans-serif.~is',
-						'~.Verdana, Helvetica, sans-serif.~is',
-						'~\[list=1\]\[\*\]~is',
-						'~\[list\]\[\*\]~is',
-						'~\[\*\]~is',
-						'~\[\/list\]~is',
-					),
-					array(
-						'[size=$1pt]',
-						'[left]$1[/left]',
-						'[right]$1[/right]',
-						'[center]$1[/center]',
-						'$1',
-						'Geneva',
-						'Tahoma',
-						'Arial',
-						'Chicago',
-						'Comic Sans MS',
-						'Courier New',
-						'Georgia',
-						'Helvetica',
-						'Impact',
-						'Lucida Sans',
-						'Times New Roman',
-						'Trebuchet MS',
-						'Verdana',
-						'[list type=decimal][li]',
-						'[list][li]',
-						'[/li][li]',
-						'[/li][/list]',
-					),
-					trim($row['signature'])
-				);
+			$row['signature'] = preg_replace(
+				array(
+					'~\[size=(.+?)\]~is',
+					'~\[align=left\](.+?)\[\/align\]~is',
+					'~\[align=right\](.+?)\[\/align\]~is',
+					'~\[align=center\](.+?)\[\/align\]~is',
+					'~\[align=justify\](.+?)\[\/align\]~is',
+					'~.Geneva, Arial, Helvetica, sans-serif.~is',
+					'~.Tahoma, Arial, Helvetica, sans-serif.~is',
+					'~.Arial, Helvetica, sans-serif.~is',
+					'~.Chicago, Impact, Compacta, sans-serif.~is',
+					'~.Comic Sans MS, sans-serif.~is',
+					'~.Courier New, Courier, mono.~is',
+					'~.Georgia, Times New Roman, Times, serif.~is',
+					'~.Helvetica, Verdana, sans-serif.~is',
+					'~.Impact, Compacta, Chicago, sans-serif.~is',
+					'~.Lucida Sans, Monaco, Geneva, sans-serif.~is',
+					'~.Times New Roman, Times, Georgia, serif.~is',
+					'~.Trebuchet MS, Arial, sans-serif.~is',
+					'~.Verdana, Helvetica, sans-serif.~is',
+					'~\[list=1\]\[\*\]~is',
+					'~\[list\]\[\*\]~is',
+					'~\[\*\]~is',
+					'~\[\/list\]~is',
+				),
+				array(
+					'[size=$1pt]',
+					'[left]$1[/left]',
+					'[right]$1[/right]',
+					'[center]$1[/center]',
+					'$1',
+					'Geneva',
+					'Tahoma',
+					'Arial',
+					'Chicago',
+					'Comic Sans MS',
+					'Courier New',
+					'Georgia',
+					'Helvetica',
+					'Impact',
+					'Lucida Sans',
+					'Times New Roman',
+					'Trebuchet MS',
+					'Verdana',
+					'[list type=decimal][li]',
+					'[list][li]',
+					'[/li][li]',
+					'[/li][/list]',
+				),
+				trim($row['signature'])
+			);
 
-				/* load wbb userOptions */
-				$request = $db->query("
-					SELECT *
-					FROM {$from_prefix}{$wcf_prefix}user_option_value
-					WHERE userID = $row[id_member]");
+			/* load wbb userOptions */
+			$request = $db->query("
+				SELECT *
+				FROM {$from_prefix}{$wcf_prefix}user_option_value
+				WHERE userID = $row[id_member]");
 	
-					while ($userdata = $db->fetch_assoc($request))
-						$smfOptions = $userdata;
+			while ($userdata = $db->fetch_assoc($request))
+				$smfOptions = $userdata;
 	
-					$db->free_result($request);
+			$db->free_result($request);
 
-					/* now we can fix some profile options*/	
-					$row['birthdate'] = $smfOptions['userOption'. $userOptions['birthday']];
-					$row['show_online'] = !empty($smfOptions['userOption'. $userOptions['invisible']]) ? (int) $smfOptions['userOption'. $userOptions['invisible']] : 0;
-					$row['hide_email'] = (int)$smfOptions['userOption'. $userOptions['hideEmailAddress']];
-					$row['location'] = !empty($smfOptions['userOption'. $userOptions['location']]) ? $smfOptions['userOption'. $userOptions['location']] : '';
-					$row['gender'] = !empty($smfOptions['userOption'. $userOptions['gender']])? $smfOptions['userOption'. $userOptions['gender']] : 0;
-					$row['website_title'] = $smfOptions['userOption'. $userOptions['homepage']];
-					$row['website_url'] = $smfOptions['userOption'. $userOptions['homepage']];
-					/* fix invalid birthdates */
-					if(!preg_match('/\d{4}-\d{2}-\d{2}/', $row['birthdate']))
-						$row['birthdate'] = '0001-01-01';
+			/* now we can fix some profile options*/	
+			$row['birthdate'] = $smfOptions['userOption'. $userOptions['birthday']];
+			$row['show_online'] = !empty($smfOptions['userOption'. $userOptions['invisible']]) ? (int) $smfOptions['userOption'. $userOptions['invisible']] : 0;
+			$row['hide_email'] = (int)$smfOptions['userOption'. $userOptions['hideEmailAddress']];
+			$row['location'] = !empty($smfOptions['userOption'. $userOptions['location']]) ? $smfOptions['userOption'. $userOptions['location']] : '';
+			$row['gender'] = !empty($smfOptions['userOption'. $userOptions['gender']])? $smfOptions['userOption'. $userOptions['gender']] : 0;
+			$row['website_title'] = $smfOptions['userOption'. $userOptions['homepage']];
+			$row['website_url'] = $smfOptions['userOption'. $userOptions['homepage']];
+			/* fix invalid birthdates */
+			if(!preg_match('/\d{4}-\d{2}-\d{2}/', $row['birthdate']))
+				$row['birthdate'] = '0001-01-01';
 		</preparsecode>
 		<query>
 			SELECT
@@ -139,7 +140,7 @@
 				1 AS show_online, 0 AS id_group, 1 AS hide_email, 
 				SUBSTRING(u.signature, 1, 65534) AS signature, salt AS password_salt
 			FROM {$from_prefix}wcf1_user AS u
-			LEFT JOIN {$from_prefix}{$wbb_prefix}user AS p ON (u.userID = p.UserID);
+				LEFT JOIN {$from_prefix}{$wbb_prefix}user AS p ON (u.userID = p.UserID);
 		</query>
 	</step>
 	<step>
