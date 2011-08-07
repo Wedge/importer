@@ -2,7 +2,7 @@
 <importer xmlns="http://wedge.org/xml/importer" xmlns:smf="http://wedge.org/">
 	<general>
 		<name>Woltlab Burning Board 3.1></name>
-		<version>CDATA[Wedge 0.1</version>
+		<version>Wedge 0.1</version>
 		<settings>/wcf/config.inc.php</settings>
 		<form>
 			<field id="1" type="text" size="20" label="WCF table prefix (default is wcf1_ )">wcf_prefix</field>
@@ -131,16 +131,15 @@
 						$row['birthdate'] = '0001-01-01';
 		</preparsecode>
 		<query>
-				SELECT
-					u.userID AS id_member, SUBSTRING(u.username, 1, 80) AS member_name,
-					IF (p.Posts IS NULL, 0, p.Posts) AS posts, u.registrationDate AS date_registered,
-					u.lastActivityTime AS last_login,SUBSTRING(u.username, 1, 255) AS real_name,
-					u.password AS passwd, SUBSTRING(u.email, 1, 64) AS email_address,
-					1 AS show_online, 0 AS id_group, 1 AS hide_email, 
-					SUBSTRING(u.signature, 1, 65534) AS signature, salt AS password_salt
-				FROM {$from_prefix}wcf1_user AS u
-				LEFT JOIN {$from_prefix}{$wbb_prefix}user AS p ON (u.userID = p.UserID);
-			
+			SELECT
+				u.userID AS id_member, SUBSTRING(u.username, 1, 80) AS member_name,
+				IF (p.Posts IS NULL, 0, p.Posts) AS posts, u.registrationDate AS date_registered,
+				u.lastActivityTime AS last_login,SUBSTRING(u.username, 1, 255) AS real_name,
+				u.password AS passwd, SUBSTRING(u.email, 1, 64) AS email_address,
+				1 AS show_online, 0 AS id_group, 1 AS hide_email, 
+				SUBSTRING(u.signature, 1, 65534) AS signature, salt AS password_salt
+			FROM {$from_prefix}wcf1_user AS u
+			LEFT JOIN {$from_prefix}{$wbb_prefix}user AS p ON (u.userID = p.UserID);
 		</query>
 	</step>
 	<step>
@@ -149,14 +148,12 @@
 		<destination>{$to_prefix}categories</destination>
 		<presql>TRUNCATE {$to_prefix}categories;</presql>
 		<query>
-			
-				SELECT
-					c.boardID AS id_cat, SUBSTRING(c.title, 1, 255) AS name,
-					o.position AS cat_order
-				FROM {$from_prefix}{$wbb_prefix}board AS c
-					LEFT JOIN {$from_prefix}{$wbb_prefix}board_structure AS o ON (o.boardID = c.boardID)
-				WHERE boardType = 1;
-			
+			SELECT
+				c.boardID AS id_cat, SUBSTRING(c.title, 1, 255) AS name,
+				o.position AS cat_order
+			FROM {$from_prefix}{$wbb_prefix}board AS c
+				LEFT JOIN {$from_prefix}{$wbb_prefix}board_structure AS o ON (o.boardID = c.boardID)
+			WHERE boardType = 1;		
 		</query>
 	</step>
 	<step>
@@ -280,7 +277,7 @@
 				trim($row['body'])
 			);
 		</preparsecode>
-		<query><![CDATA[
+		<query>
 			SELECT
 				p.postID AS id_msg, p.threadID AS id_topic, t.boardID AS id_board,
 				p.time AS poster_time, p.userID AS id_member,
@@ -289,12 +286,12 @@
 				SUBSTRING(p.ipAddress, 1, 255) AS poster_ip,
 				SUBSTRING(IFNULL(u.email, ''), 1, 255) AS poster_email,
 				p.enableSmilies AS smileys_enabled,
-				SUBSTRING(REPLACE(p.message, '<br>', '<br />'), 1, 65534) AS body,
+				SUBSTRING(p.message, 1, 65534) AS body,
 				p.lastEditTime AS modified_name, 'xx' AS icon
 			FROM {$from_prefix}{$wbb_prefix}post AS p
 				INNER JOIN {$from_prefix}{$wbb_prefix}thread AS t ON (t.threadID = p.threadID)
 				LEFT JOIN {$from_prefix}{$wcf_prefix}user AS u ON (u.userID = p.userID);
-		]]></query>
+		</query>
 	</step>
 	<step>
 		<title>Importing polls</title>
@@ -347,7 +344,7 @@
 			SELECT
 				v.pollID AS id_poll, v.userID AS id_member, c.id_choice AS id_choice
 			FROM {$from_prefix}{$wcf_prefix}poll_option_vote AS v
-			LEFT JOIN {$to_prefix}poll_choices AS c ON (v.pollOptionID = c.old_choice)
+				LEFT JOIN {$to_prefix}poll_choices AS c ON (v.pollOptionID = c.old_choice)
 			GROUP BY id_poll, id_member;
 		</query>
 	</step>
