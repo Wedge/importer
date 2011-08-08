@@ -48,6 +48,7 @@ $template->footer();
 class Importer
 {
 	const WEDGE = 'import';
+	const INVALID_IP = '00000000000000000000000000000000';
 
 	public $db;
 
@@ -172,7 +173,7 @@ class Importer
 			{
 				try
 				{
-					if (!$xmlObj = simplexml_load_file($entry, 'SimpleXMLElement', LIBXML_NOCDATA))
+					if(!$xmlObj = simplexml_load_file($entry, 'SimpleXMLElement', LIBXML_NOCDATA))
 						throw new import_exception('XML-Syntax error in file: ' . $entry);
 
 					$xmlObj = simplexml_load_file($entry, 'SimpleXMLElement', LIBXML_NOCDATA);
@@ -303,7 +304,7 @@ class Importer
 		try
 		{
 			$db = new Database($db_server, $db_user, $db_passwd, $db_persist);
-			// Wedge is UTF8 only, let's set our mysql connection to utf8
+			// Wedge is UTF8 only, let's set our mysql connetction to utf8
 			$db->query('SET NAMES \'utf8\'');
 		}
 		catch(Exception $e)
@@ -406,6 +407,74 @@ class Importer
 		$string = strtr($string, array('{$from_prefix}' => $this->from_prefix, '{$to_prefix}' => $this->to_prefix));
 
 		return $string;
+	}
+	/**
+	* Converts an IP address from either IPv4, or IPv6 form into the 32 hexdigit string used internally.
+	* function taken from the Wedge core (QueryString.php).
+	*
+	* @param string $ip An IP address in IPv4 (x.y.z.a), IPv4 over IPv6 (::ffff:x.y.z.a) or IPv6 (x:y:z:a::b) type formats
+	* @return string A 32 hexcharacter string, all 0 if the incoming address was not valid.
+	*/
+	private function expand_ip($ip)
+	{
+		static $ip_array = array();
+		if (isset($ip_array[$ip]))
+			return $ip_array[$ip];
+
+		// OK, so what are we dealing with?
+		$contains_v4 = strpos($ip, '.') !== false;
+		$contains_v6 = strpos($ip, ':') !== false;
+
+		if ($contains_v4)
+		{
+			// So it's IPv4 in some form. Is it x.y.z.a or ::ffff:x.y.z.a ?
+			if ($contains_v6)
+			{
+				// OK, so it's probably ::ffff:x.y.z.a format, let's do something about that.
+				if (strpos($ip, '::ffff:') !== 0)
+					return self::INVALID_IP; // oops, it wasn't valid since this is the only valid prefix for this format.
+				$ip = substr($ip, 7);
+			}
+
+			if (!preg_match('~^((([1]?\d)?\d|2[0-4]\d|25[0-5])\.){3}(([1]?\d)?\d|2[0-4]\d|25[0-5])$~', $ip))
+				return self::INVALID_IP; // oops, not a valid IPv4 either
+
+			// It's just x.y.z.a
+			$ipv6 = '00000000000000000000ffff';
+			$ipv4 = explode('.', $ip);
+			foreach ($ipv4 as $octet)
+				$ipv6 .= str_pad(dechex($octet), 2, '0', STR_PAD_LEFT);
+			return $ip_array[$ip] = $ipv6;
+		}
+		elseif ($contains_v6)
+		{
+			if (strpos($ip, '::') !== false)
+			{
+				$pieces = explode('::', $ip);
+				if (count($pieces) !== 2)
+					return self::INVALID_IP; // can't be valid!
+
+				// OK, so how many blocks do we have that are actual blocks?
+				$before_pieces = explode(':', $pieces[0]);
+				$after_pieces = explode(':', $pieces[1]);
+				foreach ($before_pieces as $k => $v)
+					if ($v == '')
+						unset($before_pieces[$k]);
+				foreach ($after_pieces as $k => $v)
+					if ($v == '')
+						unset($after_pieces[$k]);
+				// Glue everything back together.
+				$ip = preg_replace('~((?<!\:):$)~', '', $pieces[0] . (count($before_pieces) ? ':' : '') . str_repeat('0:', 8 - (count($before_pieces) + count($after_pieces))) . $pieces[1]);
+			}
+
+			$ipv6 = explode(':', $ip);
+			foreach ($ipv6 as $k => $v)
+				$ipv6[$k] = str_pad($v, 4, '0', STR_PAD_LEFT);
+			return $ip_array[$ip] = implode('', $ipv6);
+		}
+
+		// Just in case we don't know what this is, return *something* (if it contains neither IPv4 nor IPv6, bye)
+		return self::INVALID_IP;
 	}
 
 	public function doStep0($error_message = null)
@@ -675,6 +744,17 @@ class Importer
 									$row['real_name'] = strtr($row['real_name'], array('\'' => '&#039;'));
 							}
 
+							//prepare ip address conversion
+							if (isset($this->xml->general->convert_ip))
+							{
+								$convert_ips = explode(',', $this->xml->general->convert_ip);
+								foreach ($convert_ips as $ip)
+								{
+									$ip = trim($ip);
+									if (array_key_exists($ip, $row))
+										$row[$ip] = $this->expand_ip($row[$ip]);
+								}
+							}
 							//inject our charset class, we need proper utf-8
 							$row = Charset::fix($row);
 
@@ -1777,7 +1857,7 @@ class Charset
 	*
 	*/
 
-		if (is_array($text))
+		if(is_array($text))
 		{
 			foreach($text as $k => $v)
 				$text[$k] = self::fix($v);
@@ -1785,7 +1865,7 @@ class Charset
 		}
 
 		// numeric? There's nothing to do, we simply return our input.
-		if (is_numeric($text))
+		if(is_numeric($text))
 			return $text;
 
 		$max = strlen($text);
@@ -1794,16 +1874,16 @@ class Charset
 		for($i = 0; $i < $max; $i++)
 		{
 			$c1 = $text{$i};
-			if ($c1 >= "\xc0")
+			if($c1 >= "\xc0")
 			{
 				//Should be converted to UTF8, if it's not UTF8 already
 				$c2 = $i+1 >= $max? "\x00" : $text{$i+1};
 				$c3 = $i+2 >= $max? "\x00" : $text{$i+2};
 				$c4 = $i+3 >= $max? "\x00" : $text{$i+3};
-				if ($c1 >= "\xc0" & $c1 <= "\xdf")
+				if($c1 >= "\xc0" & $c1 <= "\xdf")
 				{
 					//looks like 2 bytes UTF8
-					if ($c2 >= "\x80" && $c2 <= "\xbf")
+					if($c2 >= "\x80" && $c2 <= "\xbf")
 					{
 						//yeah, almost sure it's UTF8 already
 						$buf .= $c1 . $c2;
@@ -1817,10 +1897,10 @@ class Charset
 						$buf .= $cc1 . $cc2;
 					}
 				}
-				elseif ($c1 >= "\xe0" & $c1 <= "\xef")
+				elseif($c1 >= "\xe0" & $c1 <= "\xef")
 				{
 					//looks like 3 bytes UTF8
-					if ($c2 >= "\x80" && $c2 <= "\xbf" && $c3 >= "\x80" && $c3 <= "\xbf")
+					if($c2 >= "\x80" && $c2 <= "\xbf" && $c3 >= "\x80" && $c3 <= "\xbf")
 					{
 						//yeah, almost sure it's UTF8 already
 						$buf .= $c1 . $c2 . $c3;
@@ -1834,10 +1914,10 @@ class Charset
 						$buf .= $cc1 . $cc2;
 					}
 				}
-				elseif ($c1 >= "\xf0" & $c1 <= "\xf7")
+				elseif($c1 >= "\xf0" & $c1 <= "\xf7")
 				{
 					//looks like 4 bytes UTF8
-					if ($c2 >= "\x80" && $c2 <= "\xbf" && $c3 >= "\x80" && $c3 <= "\xbf" && $c4 >= "\x80" && $c4 <= "\xbf")
+					if($c2 >= "\x80" && $c2 <= "\xbf" && $c3 >= "\x80" && $c3 <= "\xbf" && $c4 >= "\x80" && $c4 <= "\xbf")
 					{
 						//yeah, almost sure it's UTF8 already
 						$buf .= $c1 . $c2 . $c3;
@@ -1859,7 +1939,7 @@ class Charset
 					$buf .= $cc1 . $cc2;
 				}
 			}
-			elseif (($c1 & "\xc0") == "\x80")
+			elseif(($c1 & "\xc0") == "\x80")
 			{
 				// needs conversion
 				$cc1 = (chr(ord($c1) / 64) | "\xc0");
@@ -1936,7 +2016,7 @@ class lng
 				$lngfile = dirname(__FILE__) . '/import_en.xml';
 		}
 		//ouch, we really should never arrive here..
-		if (!$lngfile)
+		if(!$lngfile)
 			throw new Exception('Unable to detect language file!');
 
 		$langObj = simplexml_load_file($lngfile, 'SimpleXMLElement', LIBXML_NOCDATA);
@@ -2088,14 +2168,14 @@ class template
 				}
 
 				function processRequest () {
-					// readyState of 4 signifies request is complete
-					if (req.readyState == 4) {
-						// status of 200 signifies sucessful HTTP call
-						if (req.status == 200) {
-							if (callback) callback(req.responseXML, string);
-						}
+				// readyState of 4 signifies request is complete
+				if (req.readyState == 4) {
+					// status of 200 signifies sucessful HTTP call
+					if (req.status == 200) {
+						if (callback) callback(req.responseXML, string);
 					}
 				}
+			}
 
 				this.doGet = function() {
 					// make a HTTP GET request to the URL asynchronously
@@ -2108,7 +2188,12 @@ class template
 				var target = document.getElementById(string);
 				var from = "', isset($import->xml->general->settings) ? $import->xml->general->settings : 'null', '";
 				var to = "/Settings.php";
-				var extend = (string == "path_to") ? to : from;
+
+				if(string == "path_to")
+					extend = to;
+				else
+					extend = from;
+
 				var url = "import.php?xml=true&"+ string + "=" + target.value + extend;
 				var ajax = new AJAXCall(url, validateCallback, string);
 				ajax.doGet();
@@ -2498,7 +2583,7 @@ class template
 		if ($writable)
 			echo '
 				<div style="margin: 1ex; font-weight: bold;">
-					<label for="delete_self"><input type="checkbox" id="delete_self" onclick="doTheDelete();" />&nbsp;', lng::get('we.imp.check_box'), '</label>
+					<label for="delete_self"><input type="checkbox" id="delete_self" onclick="doTheDelete();" />', lng::get('we.imp.check_box'), '</label>
 				</div>
 				<script type="text/javascript"><!-- // --><![CDATA[
 					function doTheDelete()
@@ -2558,7 +2643,7 @@ class template
 	{
 		global $import;
 
-		if (isset($_GET['doStep']) && isset($_GET['bypass']))
+		if(isset($_GET['doStep']) && isset($_GET['bypass']))
 		{
 			$temp = unserialize($_GET['bypass']);
 			foreach ($temp as $key => $value)
@@ -2600,10 +2685,10 @@ class template
 				{
 					var req;
 
-					if (window.XMLHttpRequest)
+					if(window.XMLHttpRequest)
 						req = new XMLHttpRequest();
 
-					else if (window.ActiveXObject)
+					else if(window.ActiveXObject)
 						req = new ActiveXObject("Microsoft.XMLHTTP");
 
 					return req;
@@ -2625,7 +2710,7 @@ class template
 				function handleResponse()
 				{
 
-					if (http.readyState == 4 && http.status == 200)
+					if(http.readyState == 4 && http.status == 200)
 					{
 						// the PHP output
 						var response = http.responseText;
@@ -2690,7 +2775,7 @@ class Cookie
 
 	public function set($data, $name = 'wedge_importer_cookie')
 	{
-		if (!empty($data))
+		if(!empty($data))
 		{
 			setcookie($name, serialize($data), time()+ 86400);
 			$_COOKIE[$name] = serialize($data);
@@ -2721,7 +2806,7 @@ class Cookie
 	public function extend($data, $name = 'wedge_importer_cookie')
 	{
 		$cookie = unserialize($_COOKIE[$name]);
-		if (!empty($cookie) && isset($data))
+		if(!empty($cookie) && isset($data))
 			$merged = array_merge((array)$cookie, (array)$data);
 
 		$this->set($merged);

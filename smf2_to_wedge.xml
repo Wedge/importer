@@ -7,6 +7,7 @@
 		<from_prefix>`$db_name`.$db_prefix</from_prefix>
 		<table_test>{$from_prefix}members;</table_test>
 		<defines>SMF=1</defines>
+		<convert_ip>member_ip, member_ip2, poster_ip, ip</convert_ip>
 	</general>
 	<step>
 		<title>Importing settings</title>
@@ -289,8 +290,8 @@
 		</options>
 		<query>
 				SELECT
-					id_msg, approved, id_topic, id_board, poster_time, id_member, id_msg_modified, subject, poster_name,
-					poster_email, poster_ip, smileys_enabled, modified_time, modified_name, body, icon
+					id_msg, id_topic, id_board, poster_time, id_member, id_msg_modified, subject, poster_name,
+					poster_email, poster_ip, smileys_enabled, modified_time, modified_name, body, icon, approved
 				FROM {$from_prefix}messages;
 		</query>
 	</step>
