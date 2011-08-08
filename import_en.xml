@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lang xmlns="http://wedge.org/xml/importer/lang" xmlns:smf="http://wedge.org" languagecode="en">
+	<item name="we.imp.locale">en</item>
 	<item name="we.imp.which_software"><![CDATA[Which software are you using?]]></item>
 	<item name="we.imp.multiple_files"><![CDATA[The importer found multiple import data files. Please choose the one you wish to use.]]></item>
 	<item name="we.imp.not_here"><![CDATA[It's not here!]]></item>

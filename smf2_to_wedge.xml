@@ -8,6 +8,195 @@
 		<table_test>{$from_prefix}members;</table_test>
 		<defines>SMF=1</defines>
 	</general>
+	<step>
+		<title>Importing settings</title>
+		<detect>{$from_prefix}settings</detect>
+		<destination>{$to_prefix}settings</destination>
+		<options>
+			<replace>true</replace>
+		</options>
+		<code>
+			$do_import = array(
+				'news',
+				'compactTopicPagesContiguous',
+				'compactTopicPagesEnable',
+				'enableStickyTopics',
+				'todayMod',
+				'enablePreviousNext',
+				'pollMode',
+				'enableVBStyleLogin',
+				'enableCompressedOutput',
+				'attachmentSizeLimit',
+				'attachmentPostLimit',
+				'attachmentNumPerPostLimit',
+				'attachmentDirSizeLimit',
+				'attachmentExtensions',
+				'attachmentCheckExtensions',
+				'attachmentShowImages',
+				'attachmentEnable',
+				'attachmentEncryptFilenames',
+				'attachmentThumbnails',
+				'attachmentThumbWidth',
+				'attachmentThumbHeight',
+				'censorIgnoreCase',
+				'mostOnline',
+				'mostOnlineToday',
+				'mostDate',
+				'allow_disableAnnounce',
+				'trackStats',
+				'userLanguage',
+				'titlesEnable',
+				'topicSummaryPosts',
+				'enableErrorLogging',
+				'max_image_width',
+				'max_image_height',
+				'onlineEnable',
+				'cal_enabled',
+				'cal_maxyear',
+				'cal_minyear',
+				'cal_daysaslink',
+				'cal_defaultboard',
+				'cal_showholidays',
+				'cal_showbdays',
+				'cal_showevents',
+				'cal_showweeknum',
+				'cal_maxspan',
+				'smtp_host',
+				'smtp_port',
+				'smtp_username',
+				'smtp_password',
+				'mail_type',
+				'timeLoadPageEnable',
+				'totalMembers',
+				'totalTopics',
+				'totalMessages',
+				'simpleSearch',
+				'censor_vulgar',
+				'censor_proper',
+				'enablePostHTML',
+				'enableEmbeddedFlash',
+				'xmlnews_enable',
+				'xmlnews_maxlen',
+				'hotTopicPosts',
+				'hotTopicVeryPosts',
+				'registration_method',
+				'send_validation_onChange',
+				'send_welcomeEmail',
+				'allow_editDisplayName',
+				'allow_hideOnline',
+				'guest_hideContacts',
+				'spamWaitTime',
+				'pm_spam_settings',
+				'reserveWord',
+				'reserveCase',
+				'reserveUser',
+				'reserveName',
+				'reserveNames',
+				'autoLinkUrls',
+				'banLastUpdated',
+				'avatar_max_height_external',
+				'avatar_max_width_external',
+				'avatar_action_too_large',
+				'avatar_max_height_upload',
+				'avatar_max_width_upload',
+				'avatar_resize_upload',
+				'avatar_download_png',
+				'failed_login_threshold',
+				'oldTopicDays',
+				'edit_wait_time',
+				'edit_disable_time',
+				'autoFixDatabase',
+				'allow_guestAccess',
+				'time_format',
+				'number_format',
+				'enableBBC',
+				'max_messageLength',
+				'signature_settings',
+				'autoOptMaxOnline',
+				'defaultMaxMessages',
+				'defaultMaxTopics',
+				'defaultMaxMembers',
+				'enableParticipation',
+				'recycle_enable',
+				'recycle_board',
+				'maxMsgID',
+				'enableAllMessages',
+				'fixLongWords',
+				'who_enabled',
+				'time_offset',
+				'cookieTime',
+				'lastActive',
+				'cal_days_for_index',
+				'requireAgreement',
+				'unapprovedMembers',
+				'default_personal_text',
+				'package_make_backups',
+				'databaseSession_enable',
+				'databaseSession_loose',
+				'databaseSession_lifetime',
+				'search_cache_size',
+				'search_results_per_page',
+				'search_weight_frequency',
+				'search_weight_age',
+				'search_weight_length',
+				'search_weight_subject',
+				'search_weight_first_message',
+				'search_max_results',
+				'search_floodcontrol_time',
+				'permission_enable_deny',
+				'permission_enable_postgroups',
+				'mail_next_send',
+				'mail_recent',
+				'settings_updated',
+				'next_task_time',
+				'warning_settings',
+				'admin_features',
+				'last_mod_report_action',
+				'pruningOptions',
+				'cache_enable',
+				'reg_verification',
+				'enable_buddylist',
+				'birthday_email',
+				'dont_repeat_theme_core',
+				'dont_repeat_smileys_20',
+				'globalCookies',
+				'default_timezone',
+				'memberlist_updated',
+				'latestMember',
+				'latestRealName',
+				'db_mysql_group_by_fix',
+				'rand_seed',
+				'mostOnlineUpdated',
+				'calendar_updated',
+				'search_pointer',
+				'spider_name_cache',
+				'modlog_enabled',
+				'disabledBBC',
+				'latest_member',
+				'latest_real_name',
+				'total_members',
+				'total_messages',
+				'max_msg_id',
+				'total_topics',
+				'disable_hash_time',
+				'latestreal_name',
+				'disableHashTime',
+			);
+
+			$request = $db->query("
+				SELECT variable, value
+				FROM {$from_prefix}settings;");
+
+			while ($row = $db->fetch_assoc($request))
+			{
+				if (in_array($row['variable'], $do_import))
+					$db->query("
+						REPLACE INTO {$to_prefix}settings
+							(variable, value)
+						VALUES('$row[variable]', '$row[value]')");
+			}
+		</code>
+	</step>
 	<step type="mandatory">
 		<title>Importing members</title>
 		<detect>{$from_prefix}members</detect>
@@ -210,6 +399,17 @@
 		</query>
 	</step>
 	<step>
+		<title>Importing mark read data</title>
+		<detect>{$from_prefix}log_mark_read</detect>
+		<destination>{$to_prefix}log_mark_read</destination>
+		<presql>TRUNCATE {$to_prefix}log_mark_read;</presql>
+		<query>
+				SELECT
+					id_member, id_board, id_msg
+				FROM {$from_prefix}log_mark_read;
+		</query>
+	</step>
+	<step>
 		<title>Importing notifications</title>
 		<detect>{$from_prefix}log_notify</detect>
 		<destination>{$to_prefix}log_notify</destination>
@@ -254,6 +454,19 @@
 					id_group, group_name, description, online_color, min_posts,
 					max_messages, stars, group_type, hidden, id_parent
 				FROM {$from_prefix}membergroups;
+		</query>
+	</step>
+	<step>
+		<title>Importing group moderators</title>
+		<detect>{$from_prefix}group_moderators</detect>
+		<destination>{$to_prefix}group_moderators</destination>
+		<options>
+			<replace>true</replace>
+		</options>
+		<query>
+				SELECT
+					id_group, id_member
+				FROM {$from_prefix}group_moderators;
 		</query>
 	</step>
 	<step>
@@ -307,6 +520,86 @@
 					id_smiley, code, filename, description, smiley_row,
 					smiley_order, hidden
 				FROM {$from_prefix}smileys;
+		</query>
+	</step>
+	<step>
+		<title>Importing statistics (activity log)</title>
+		<detect>{$from_prefix}log_activity</detect>
+		<destination>{$to_prefix}log_activity</destination>
+		<presql>TRUNCATE {$to_prefix}log_activity;</presql>
+		<query>
+				SELECT
+					date, hits, topics, posts, registers, most_on
+				FROM {$from_prefix}log_activity;
+		</query>
+	</step>
+	<step>
+		<title>Importing logged actions</title>
+		<detect>{$from_prefix}log_actions</detect>
+		<destination>{$to_prefix}log_actions</destination>
+		<presql>TRUNCATE {$to_prefix}log_actions;</presql>
+		<query>
+				SELECT
+					id_action, id_log, log_time, id_member, ip, action, id_board,
+					id_topic, id_msg, extra
+				FROM {$from_prefix}log_actions;
+		</query>
+	</step>
+	<step>
+		<title>Importing reported posts</title>
+		<detect>{$from_prefix}log_reported</detect>
+		<destination>{$to_prefix}log_reported</destination>
+		<presql>TRUNCATE {$to_prefix}log_reported;</presql>
+		<query>
+				SELECT
+					id_report, id_msg, id_topic, id_board, id_member, membername, subject,
+					body, time_started, time_updated, num_reports, closed, ignore_all
+				FROM {$from_prefix}log_reported;
+		</query>
+	</step>
+	<step>
+		<title>Importing reported comments</title>
+		<detect>{$from_prefix}log_reported_comments</detect>
+		<destination>{$to_prefix}log_reported_comments</destination>
+		<presql>TRUNCATE {$to_prefix}log_reported_comments;</presql>
+		<query>
+				SELECT
+					id_comment, id_report, id_member, membername, comment, time_sent
+				FROM {$from_prefix}log_reported_comments;
+		</query>
+	</step>
+	<step>
+		<title>Importing spider hits</title>
+		<detect>{$from_prefix}log_spider_hits</detect>
+		<destination>{$to_prefix}log_spider_hits</destination>
+		<presql>TRUNCATE {$to_prefix}log_spider_hits;</presql>
+		<query>
+				SELECT
+					id_hit, id_spider, log_time, url, processed
+				FROM {$from_prefix}log_spider_hits;
+		</query>
+	</step>
+	<step>
+		<title>Importing spider stats</title>
+		<detect>{$from_prefix}log_spider_stats</detect>
+		<destination>{$to_prefix}log_spider_stats</destination>
+		<presql>TRUNCATE {$to_prefix}log_spider_stats;</presql>
+		<query>
+				SELECT
+					id_spider, page_hits, last_seen, stat_date
+				FROM {$from_prefix}log_spider_stats;
+		</query>
+	</step>
+		<step>
+		<title>Importing subscriptions</title>
+		<detect>{$from_prefix}subscriptions</detect>
+		<destination>{$to_prefix}subscriptions</destination>
+		<presql>TRUNCATE {$to_prefix}subscriptions;</presql>
+		<query>
+				SELECT
+					id_subscribe, name, description, cost, length, id_group,
+					add_groups, active, repeatable, allow_partial, reminder, email_complete
+				FROM {$from_prefix}subscriptions;
 		</query>
 	</step>
 </importer>

@@ -302,7 +302,8 @@ class Importer
 		}
 		try
 		{
-			$db = new Database($db_server, $db_user, $db_passwd);
+			$db = new Database($db_server, $db_user, $db_passwd, $db_persist);
+			// Wedge is UTF8 only, let's set our mysql connetction to utf8
 			$db->query('SET NAMES \'utf8\'');
 		}
 		catch(Exception $e)
@@ -310,7 +311,6 @@ class Importer
 			import_exception::exception_handler($e);
 			die();
 		}
-		// Wedge is UTF8 only, let's set our mysql connetction to utf8
 
 		if (strpos($db_prefix, '.') === false)
 		{
@@ -393,6 +393,21 @@ class Importer
 		return $steps;
 	}
 
+	private function fix_params($string)
+	{
+		if (isset($_SESSION['import_parameters']))
+		{
+			foreach ($_SESSION['import_parameters'] as $param)
+			{
+				foreach ($param as $key => $value)
+					$string = strtr($string, array('{$' . $key . '}' => $value));
+			}
+		}
+		$string = strtr($string, array('{$from_prefix}' => $this->from_prefix, '{$to_prefix}' => $this->to_prefix));
+
+		return $string;
+	}
+
 	public function doStep0($error_message = null)
 	{
 		global $db, $template, $to_prefix, $import_script, $cookie;
@@ -472,10 +487,8 @@ class Importer
 
 			//any preparsing code here?
 			if (isset($steps->preparsecode) && !empty($steps->preparsecode))
-			{
-				$special_code = helper::fix_params((string)$steps->preparsecode);
-				$special_code = strtr($special_code, array('{$from_prefix}' => $this->from_prefix, '{$to_prefix}' => $this->to_prefix));
-			}
+				$special_code = $this->fix_params((string)$steps->preparsecode);
+
 			$do_current = $substep >= $_GET['substep'];
 
 			if (!in_array($substep, $do_steps))
@@ -486,9 +499,7 @@ class Importer
 
 			elseif ($steps->detect)
 			{
-				$detect = (string)$steps->detect;
-				$detect = helper::fix_params($detect);
-				$count = strtr($detect, array('{$from_prefix}' => $this->from_prefix, '{$to_prefix}' => $this->to_prefix));
+				$count = $this->fix_params((string)$steps->detect);
 				$table_test = $db->query("
 					SELECT COUNT(*)
 					FROM $count", true);
@@ -515,8 +526,7 @@ class Importer
 			//pre sql queries first!!
 			if (isset($steps->presql) && !isset($_SESSION['import_steps'][$substep]['presql']))
 			{
-				$presql = strtr((string)$steps->presql, array('{$from_prefix}' => $this->from_prefix, '{$to_prefix}' => $this->to_prefix));
-				$presql = helper::fix_params($presql);
+				$presql = $this->fix_params((string)$steps->presql);
 				$presql_array = explode(';', $presql);
 				if (isset($presql_array) && is_array($presql_array))
 				{
@@ -539,7 +549,7 @@ class Importer
 				$special_table = null;
 
 			if (isset($steps->query))
-				$current_data = (string)$steps->query;
+				$current_data = substr(rtrim($this->fix_params((string)$steps->query)), 0, -1);
 
 			if (isset($steps->options->limit))
 				$special_limit = $steps->options->limit;
@@ -553,10 +563,8 @@ class Importer
 			//codeblock?
 			if (isset($steps->code))
 			{
-				$special_code = (string)$steps->code;
 				//execute our code block
-				$special_code = strtr($special_code, array('{$from_prefix}' => $this->from_prefix, '{$to_prefix}' => $this->to_prefix));
-				$special_code = helper::fix_params($special_code);
+				$special_code = $this->fix_params((string)$steps->code);
 				eval($special_code);
 				//reset some defaults
 				$current_data = '';
@@ -572,16 +580,12 @@ class Importer
 			//sql block?
 			if (!empty($steps->query))
 			{
-				$current_data = helper::fix_params($current_data);
-				$current_data = strtr(substr(rtrim($current_data), 0, -1), array('{$from_prefix}' => $this->from_prefix, '{$to_prefix}' => $this->to_prefix));
-
 				if (strpos($current_data, '{$') !== false)
 					$current_data = eval('return "' . addcslashes($current_data, '\\"') . '";');
 
 				if (isset($steps->detect))
 				{
-					$count = strtr((string)$steps->detect, array('{$from_prefix}' => $this->from_prefix, '{$to_prefix}' => $this->to_prefix));
-					$count = helper::fix_params($count);
+					$count = $this->fix_params((string)$steps->detect);
 					$result2 = $db->query("
 						SELECT COUNT(*)
 						FROM $count");
@@ -1402,19 +1406,6 @@ abstract class helper
 		return $attachment_id . '_' . strtr($clean_name, '.', '_') . md5($clean_name);
 	}
 
-	public static function fix_params($string)
-	{
-		if (isset($_SESSION['import_parameters']))
-		{
-			foreach ($_SESSION['import_parameters'] as $param)
-			{
-				foreach ($param as $key => $value)
-					$string = strtr($string, array('{$' . $key . '}' => $value));
-			}
-		}
-		return $string;
-	}
-
 	/**
 	* // Add slashes recursively...
 	*
@@ -1533,9 +1524,11 @@ abstract class helper
 
 class Database
 {
-	public function __construct($db_server, $db_user, $db_password)
+	public function __construct($db_server, $db_user, $db_password, $db_persist)
 	{
-		//if (!is_resource($this->con))
+		if ($db_persist == 1)
+			$this->con = mysql_pconnect ($db_server, $db_user, $db_password) or die (mysql_error());
+		else
 			$this->con = mysql_connect ($db_server, $db_user, $db_password) or die (mysql_error());
 	}
 
@@ -1543,19 +1536,19 @@ class Database
 	{
 		global $to_prefix;
 
-		$result = self::query("
+		$result = $this->query("
 			SELECT value
 			FROM {$to_prefix}settings
 			WHERE variable = 'attachmentUploadDir'
 			LIMIT 1");
-		list ($attachmentUploadDir) = self::fetch_row($result);
-		self::free_result($result);
+		list ($attachmentUploadDir) = $this->fetch_row($result);
+		$this->free_result($result);
 
 		// !!! This should probably be done in chunks too.
-		$result = self::query("
+		$result = $this->query("
 			SELECT id_attach, filename
 			FROM {$to_prefix}attachments");
-		while ($row = self::fetch_assoc($result))
+		while ($row = $this->fetch_assoc($result))
 		{
 			// We're duplicating this from below because it's slightly different for getting current ones.
 			$clean_name = strtr($row['filename'], 'ŠŽšžŸÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüýÿ', 'SZszYAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy');
@@ -1571,7 +1564,7 @@ class Database
 
 			@unlink($filename);
 		}
-		self::free_result($result);
+		$this->free_result($result);
 	}
 
 	public function query($string, $return_error = false)
@@ -1583,7 +1576,7 @@ class Database
 			$_SESSION['import_debug'] = !empty($_REQUEST['debug']);
 
 		if (trim($string) == 'TRUNCATE ' . $GLOBALS['to_prefix'] . 'attachments')
-			self::removeAttachments();
+			$this->removeAttachments();
 
 		$result = @mysql_query($string);
 
@@ -1899,7 +1892,7 @@ class lng
 	* @throws Exception
 	* @return bool
 	*/
-	public static function set($key, $value)
+	protected static function set($key, $value)
 	{
 		try
 		{
@@ -2075,7 +2068,7 @@ class template
 		$time_start = time();
 
 		echo '<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="', lng::get('we.imp.locale'), '" lang="', lng::get('we.imp.locale'), '">
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -2510,20 +2503,18 @@ class template
 		if ($writable)
 			echo '
 				<div style="margin: 1ex; font-weight: bold;">
-					<label for="delete_self"><input type="checkbox" id="delete_self" onclick="doTheDelete();" />', lng::get('we.imp.check_box'), '</label> (', lng::get('we.imp.check_box'), ')
+					<label for="delete_self"><input type="checkbox" id="delete_self" onclick="doTheDelete();" />', lng::get('we.imp.check_box'), '</label>
 				</div>
 				<script type="text/javascript"><!-- // --><![CDATA[
 					function doTheDelete()
 					{
 						var theCheck = document.getElementById ? document.getElementById("delete_self") : document.all.delete_self;
 						var tempImage = new Image();
-
 						tempImage.src = "', $_SERVER['PHP_SELF'], '?delete=1&" + (new Date().getTime());
 						tempImage.width = 0;
 						theCheck.disabled = true;
 					}
-				// ]]></script>
-				<br />';
+				// ]]></script>';
 		echo '
 				<p>', sprintf(lng::get('we.imp.all_imported'), $name), '</p>
 				<p>', lng::get('we.imp.smooth_transition'), '</p>';
@@ -2738,7 +2729,7 @@ class Cookie
 		if(!empty($cookie) && isset($data))
 			$merged = array_merge((array)$cookie, (array)$data);
 
-		self::set($merged);
+		$this->set($merged);
 		$_COOKIE[$name] = serialize($merged);
 
 		return true;
