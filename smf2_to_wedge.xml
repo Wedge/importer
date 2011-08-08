@@ -65,7 +65,7 @@
 					$db->query("
 						REPLACE INTO {$to_prefix}board_groups
 							(id_group, id_board, view_perm, enter_perm)
-						VALUES ($allowed, $row[id_board], 'allow', 'allow')
+						VALUES ('$allowed', $row[id_board], 'allow', 'allow')
 					");
 			}
 		</preparsecode>

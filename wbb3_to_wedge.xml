@@ -21,7 +21,7 @@
 			$request = $db->query("
 				SELECT optionName, optionID
 				FROM{$from_prefix}{$wcf_prefix}user_option");
-			
+
 			while ($wbbOpt = $db->fetch_assoc($request))
 				$userOptions[$wbbOpt['optionName']]= $wbbOpt['optionID'];
 			$db->free_result($request);
