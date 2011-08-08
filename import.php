@@ -124,7 +124,7 @@ class Importer
 
 		// If we have our script then set it to the session.
 		if (!empty($this->script))
-			$_SESSION['import_script'] = (string)$this->script;
+			$_SESSION['import_script'] = (string) $this->script;
 		if (isset($_SESSION['import_script']) && file_exists(dirname(__FILE__) . '/' . $_SESSION['import_script']) && preg_match('~_to_wedge\.xml$~', $_SESSION['import_script']) != 0)
 			$this->preparse_xml(dirname(__FILE__) . '/' . $_SESSION['import_script']);
 		else
@@ -172,7 +172,7 @@ class Importer
 			{
 				try
 				{
-					if(!$xmlObj = simplexml_load_file($entry, 'SimpleXMLElement', LIBXML_NOCDATA))
+					if (!$xmlObj = simplexml_load_file($entry, 'SimpleXMLElement', LIBXML_NOCDATA))
 						throw new import_exception('XML-Syntax error in file: ' . $entry);
 
 					$xmlObj = simplexml_load_file($entry, 'SimpleXMLElement', LIBXML_NOCDATA);
@@ -239,10 +239,10 @@ class Importer
 			$found |= @file_exists($_POST['path_from'] . stripslashes($file));
 
 		if (@ini_get('open_basedir') != '' && !$found)
-			return $this->doStep0(array(lng::get('we.imp.open_basedir'), (string)$this->xml->general->name));
+			return $this->doStep0(array(lng::get('we.imp.open_basedir'), (string) $this->xml->general->name));
 
 		if (!$found)
-			return $this->doStep0(array(lng::get('we.imp.config_not_found'), (string)$this->xml->general->name));
+			return $this->doStep0(array(lng::get('we.imp.config_not_found'), (string) $this->xml->general->name));
 
 		// Any custom form elements to speak of?
 		if ($this->xml->general->form && !empty($_SESSION['import_parameters']))
@@ -303,7 +303,7 @@ class Importer
 		try
 		{
 			$db = new Database($db_server, $db_user, $db_passwd, $db_persist);
-			// Wedge is UTF8 only, let's set our mysql connetction to utf8
+			// Wedge is UTF8 only, let's set our mysql connection to utf8
 			$db->query('SET NAMES \'utf8\'');
 		}
 		catch(Exception $e)
@@ -357,7 +357,7 @@ class Importer
 				SELECT COUNT(*)
 				FROM " . eval('return "' . $this->xml->general->table_test . '";'), true);
 			if ($result === false)
-				$this->doStep0(lng::get('we.imp.permission_denied') . mysql_error(), (string)$this->xml->general->name);
+				$this->doStep0(lng::get('we.imp.permission_denied') . mysql_error(), (string) $this->xml->general->name);
 
 			$db->free_result($result);
 		}
@@ -385,7 +385,7 @@ class Importer
 			$steps_count++;
 
 			$steps[$steps_count] = array(
-				'name' => (string)$xml_steps->title,
+				'name' => (string) $xml_steps->title,
 				'count' => $steps_count,
 				'mandatory' => $xml_steps->attributes()->{'type'},
 			);
@@ -481,13 +481,13 @@ class Importer
 			//Increase the substep slightly...
 			helper::pastTime(++$substep);
 
-			$_SESSION['import_steps'][$substep]['title'] = (string)$steps->title;
+			$_SESSION['import_steps'][$substep]['title'] = (string) $steps->title;
 			if (!isset($_SESSION['import_steps'][$substep]['status']))
 				$_SESSION['import_steps'][$substep]['status'] = 0;
 
 			//any preparsing code here?
 			if (isset($steps->preparsecode) && !empty($steps->preparsecode))
-				$special_code = $this->fix_params((string)$steps->preparsecode);
+				$special_code = $this->fix_params((string) $steps->preparsecode);
 
 			$do_current = $substep >= $_GET['substep'];
 
@@ -499,7 +499,7 @@ class Importer
 
 			elseif ($steps->detect)
 			{
-				$count = $this->fix_params((string)$steps->detect);
+				$count = $this->fix_params((string) $steps->detect);
 				$table_test = $db->query("
 					SELECT COUNT(*)
 					FROM $count", true);
@@ -526,7 +526,7 @@ class Importer
 			//pre sql queries first!!
 			if (isset($steps->presql) && !isset($_SESSION['import_steps'][$substep]['presql']))
 			{
-				$presql = $this->fix_params((string)$steps->presql);
+				$presql = $this->fix_params((string) $steps->presql);
 				$presql_array = explode(';', $presql);
 				if (isset($presql_array) && is_array($presql_array))
 				{
@@ -542,14 +542,14 @@ class Importer
 
 			if ($special_table === null)
 			{
-				$special_table = strtr(trim((string)$steps->destination), array('{$to_prefix}' => $this->to_prefix));
+				$special_table = strtr(trim((string) $steps->destination), array('{$to_prefix}' => $this->to_prefix));
 				$special_limit = 500;
 			}
 			else
 				$special_table = null;
 
 			if (isset($steps->query))
-				$current_data = substr(rtrim($this->fix_params((string)$steps->query)), 0, -1);
+				$current_data = substr(rtrim($this->fix_params((string) $steps->query)), 0, -1);
 
 			if (isset($steps->options->limit))
 				$special_limit = $steps->options->limit;
@@ -564,7 +564,7 @@ class Importer
 			if (isset($steps->code))
 			{
 				//execute our code block
-				$special_code = $this->fix_params((string)$steps->code);
+				$special_code = $this->fix_params((string) $steps->code);
 				eval($special_code);
 				//reset some defaults
 				$current_data = '';
@@ -585,7 +585,7 @@ class Importer
 
 				if (isset($steps->detect))
 				{
-					$count = $this->fix_params((string)$steps->detect);
+					$count = $this->fix_params((string) $steps->detect);
 					$result2 = $db->query("
 						SELECT COUNT(*)
 						FROM $count");
@@ -602,7 +602,7 @@ class Importer
 
 				if (isset($import_table) && $import_table !== null && strpos($current_data, '%d') !== false)
 				{
-					preg_match('~FROM [(]?([^\s,]+)~i', (string)$steps->detect, $match);
+					preg_match('~FROM [(]?([^\s,]+)~i', (string) $steps->detect, $match);
 					if (!empty($match))
 					{
 						$result = $db->query("
@@ -1777,7 +1777,7 @@ class Charset
 	*
 	*/
 
-		if(is_array($text))
+		if (is_array($text))
 		{
 			foreach($text as $k => $v)
 				$text[$k] = self::fix($v);
@@ -1785,7 +1785,7 @@ class Charset
 		}
 
 		// numeric? There's nothing to do, we simply return our input.
-		if(is_numeric($text))
+		if (is_numeric($text))
 			return $text;
 
 		$max = strlen($text);
@@ -1794,16 +1794,16 @@ class Charset
 		for($i = 0; $i < $max; $i++)
 		{
 			$c1 = $text{$i};
-			if($c1 >= "\xc0")
+			if ($c1 >= "\xc0")
 			{
 				//Should be converted to UTF8, if it's not UTF8 already
 				$c2 = $i+1 >= $max? "\x00" : $text{$i+1};
 				$c3 = $i+2 >= $max? "\x00" : $text{$i+2};
 				$c4 = $i+3 >= $max? "\x00" : $text{$i+3};
-				if($c1 >= "\xc0" & $c1 <= "\xdf")
+				if ($c1 >= "\xc0" & $c1 <= "\xdf")
 				{
 					//looks like 2 bytes UTF8
-					if($c2 >= "\x80" && $c2 <= "\xbf")
+					if ($c2 >= "\x80" && $c2 <= "\xbf")
 					{
 						//yeah, almost sure it's UTF8 already
 						$buf .= $c1 . $c2;
@@ -1817,10 +1817,10 @@ class Charset
 						$buf .= $cc1 . $cc2;
 					}
 				}
-				elseif($c1 >= "\xe0" & $c1 <= "\xef")
+				elseif ($c1 >= "\xe0" & $c1 <= "\xef")
 				{
 					//looks like 3 bytes UTF8
-					if($c2 >= "\x80" && $c2 <= "\xbf" && $c3 >= "\x80" && $c3 <= "\xbf")
+					if ($c2 >= "\x80" && $c2 <= "\xbf" && $c3 >= "\x80" && $c3 <= "\xbf")
 					{
 						//yeah, almost sure it's UTF8 already
 						$buf .= $c1 . $c2 . $c3;
@@ -1834,10 +1834,10 @@ class Charset
 						$buf .= $cc1 . $cc2;
 					}
 				}
-				elseif($c1 >= "\xf0" & $c1 <= "\xf7")
+				elseif ($c1 >= "\xf0" & $c1 <= "\xf7")
 				{
 					//looks like 4 bytes UTF8
-					if($c2 >= "\x80" && $c2 <= "\xbf" && $c3 >= "\x80" && $c3 <= "\xbf" && $c4 >= "\x80" && $c4 <= "\xbf")
+					if ($c2 >= "\x80" && $c2 <= "\xbf" && $c3 >= "\x80" && $c3 <= "\xbf" && $c4 >= "\x80" && $c4 <= "\xbf")
 					{
 						//yeah, almost sure it's UTF8 already
 						$buf .= $c1 . $c2 . $c3;
@@ -1859,7 +1859,7 @@ class Charset
 					$buf .= $cc1 . $cc2;
 				}
 			}
-			elseif(($c1 & "\xc0") == "\x80")
+			elseif (($c1 & "\xc0") == "\x80")
 			{
 				// needs conversion
 				$cc1 = (chr(ord($c1) / 64) | "\xc0");
@@ -1936,13 +1936,13 @@ class lng
 				$lngfile = dirname(__FILE__) . '/import_en.xml';
 		}
 		//ouch, we really should never arrive here..
-		if(!$lngfile)
+		if (!$lngfile)
 			throw new Exception('Unable to detect language file!');
 
 		$langObj = simplexml_load_file($lngfile, 'SimpleXMLElement', LIBXML_NOCDATA);
 
 		foreach ($langObj as $strings)
-			self::set((string)$strings->attributes()->{'name'}, (string)$strings);
+			self::set((string) $strings->attributes()->{'name'}, (string) $strings);
 
 		return null;
 	}
@@ -2088,14 +2088,14 @@ class template
 				}
 
 				function processRequest () {
-				// readyState of 4 signifies request is complete
-				if (req.readyState == 4) {
-					// status of 200 signifies sucessful HTTP call
-					if (req.status == 200) {
-						if (callback) callback(req.responseXML, string);
+					// readyState of 4 signifies request is complete
+					if (req.readyState == 4) {
+						// status of 200 signifies sucessful HTTP call
+						if (req.status == 200) {
+							if (callback) callback(req.responseXML, string);
+						}
 					}
 				}
-			}
 
 				this.doGet = function() {
 					// make a HTTP GET request to the URL asynchronously
@@ -2108,12 +2108,7 @@ class template
 				var target = document.getElementById(string);
 				var from = "', isset($import->xml->general->settings) ? $import->xml->general->settings : 'null', '";
 				var to = "/Settings.php";
-
-				if(string == "path_to")
-					extend = to;
-				else
-					extend = from;
-
+				var extend = (string == "path_to") ? to : from;
 				var url = "import.php?xml=true&"+ string + "=" + target.value + extend;
 				var ajax = new AJAXCall(url, validateCallback, string);
 				ajax.doGet();
@@ -2360,7 +2355,7 @@ class template
 		echo '
 			<h2>', lng::get('we.imp.before_continue'), '</h2>
 			<div class="content">
-				<p>', sprintf(lng::get('we.imp.before_details'), (string)$object->xml->general->name ), '</p>
+				<p>', sprintf(lng::get('we.imp.before_details'), (string) $object->xml->general->name ), '</p>
 			</div>';
 		echo '
 			<h2>', lng::get('we.imp.where'), '</h2>
@@ -2503,7 +2498,7 @@ class template
 		if ($writable)
 			echo '
 				<div style="margin: 1ex; font-weight: bold;">
-					<label for="delete_self"><input type="checkbox" id="delete_self" onclick="doTheDelete();" />', lng::get('we.imp.check_box'), '</label>
+					<label for="delete_self"><input type="checkbox" id="delete_self" onclick="doTheDelete();" />&nbsp;', lng::get('we.imp.check_box'), '</label>
 				</div>
 				<script type="text/javascript"><!-- // --><![CDATA[
 					function doTheDelete()
@@ -2563,7 +2558,7 @@ class template
 	{
 		global $import;
 
-		if(isset($_GET['doStep']) && isset($_GET['bypass']))
+		if (isset($_GET['doStep']) && isset($_GET['bypass']))
 		{
 			$temp = unserialize($_GET['bypass']);
 			foreach ($temp as $key => $value)
@@ -2605,10 +2600,10 @@ class template
 				{
 					var req;
 
-					if(window.XMLHttpRequest)
+					if (window.XMLHttpRequest)
 						req = new XMLHttpRequest();
 
-					else if(window.ActiveXObject)
+					else if (window.ActiveXObject)
 						req = new ActiveXObject("Microsoft.XMLHTTP");
 
 					return req;
@@ -2630,7 +2625,7 @@ class template
 				function handleResponse()
 				{
 
-					if(http.readyState == 4 && http.status == 200)
+					if (http.readyState == 4 && http.status == 200)
 					{
 						// the PHP output
 						var response = http.responseText;
@@ -2695,7 +2690,7 @@ class Cookie
 
 	public function set($data, $name = 'wedge_importer_cookie')
 	{
-		if(!empty($data))
+		if (!empty($data))
 		{
 			setcookie($name, serialize($data), time()+ 86400);
 			$_COOKIE[$name] = serialize($data);
@@ -2726,7 +2721,7 @@ class Cookie
 	public function extend($data, $name = 'wedge_importer_cookie')
 	{
 		$cookie = unserialize($_COOKIE[$name]);
-		if(!empty($cookie) && isset($data))
+		if (!empty($cookie) && isset($data))
 			$merged = array_merge((array)$cookie, (array)$data);
 
 		$this->set($merged);

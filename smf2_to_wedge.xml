@@ -289,7 +289,7 @@
 		</options>
 		<query>
 				SELECT
-					id_msg, approved, id_topic, id_board, id_member, id_msg_modified, subject, poster_name,
+					id_msg, approved, id_topic, id_board, poster_time, id_member, id_msg_modified, subject, poster_name,
 					poster_email, poster_ip, smileys_enabled, modified_time, modified_name, body, icon
 				FROM {$from_prefix}messages;
 		</query>
