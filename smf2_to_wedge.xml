@@ -246,7 +246,7 @@
 		<destination>{$to_prefix}boards</destination>
 		<presql>TRUNCATE {$to_prefix}boards;</presql>
 		<preparsecode>
-			$row['url'] = $this->boardurl . '/board' . $row['url'];
+			$row['url'] = substr($this->boardurl, strpos($this->boardurl, '://') + 3) . '/board' . $row['url'];
 
 			if (!empty($row['member_groups']))
 			{
