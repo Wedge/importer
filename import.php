@@ -760,7 +760,12 @@ class Importer
 
 							// If we have a message here, we'll want to convert <br /> to <br>.
 							if (isset($row['body']))
-								$row['body'] = str_replace('<br />', '<br>', $row['body']);
+								$row['body'] = str_replace(array(
+										'<br />', '&#039;', '&#39;', '&quot;'
+									), array(
+										'<br>', '\'', '\'', '"'
+									), $row['body']
+								);
 
 							if (empty($no_add) && empty($ignore_slashes))
 								$rows[] = "'" . implode("', '", helper::addslashes_recursive($row)) . "'";
