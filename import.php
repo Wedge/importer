@@ -74,7 +74,7 @@ class Importer
 
 		ob_start();
 
-		//disable gzip compression if possible
+		// disable gzip compression if possible
 		if (is_callable('apache_setenv'))
 			apache_setenv('no-gzip', '1');
 
@@ -173,7 +173,7 @@ class Importer
 			{
 				try
 				{
-					if(!$xmlObj = simplexml_load_file($entry, 'SimpleXMLElement', LIBXML_NOCDATA))
+					if (!$xmlObj = simplexml_load_file($entry, 'SimpleXMLElement', LIBXML_NOCDATA))
 						throw new import_exception('XML-Syntax error in file: ' . $entry);
 
 					$xmlObj = simplexml_load_file($entry, 'SimpleXMLElement', LIBXML_NOCDATA);
@@ -364,7 +364,7 @@ class Importer
 		}
 
 		$results = $db->query("SELECT @@SQL_BIG_SELECTS, @@SQL_MAX_JOIN_SIZE");
-		list($big_selects, $sql_max_join) = $db->fetch_row($results);
+		list ($big_selects, $sql_max_join) = $db->fetch_row($results);
 
 		// Only waste a query if its worth it.
 		if (empty($big_selects) || ($big_selects != 1 && $big_selects != '1'))
@@ -542,19 +542,19 @@ class Importer
 
 		foreach ($this->xml->step as $steps)
 		{
-			//reset some defaults
+			// Reset some defaults
 			$current_data = '';
 			$special_table = null;
 			$special_code = null;
 
-			//Increase the substep slightly...
+			// Increase the substep slightly...
 			helper::pastTime(++$substep);
 
 			$_SESSION['import_steps'][$substep]['title'] = (string) $steps->title;
 			if (!isset($_SESSION['import_steps'][$substep]['status']))
 				$_SESSION['import_steps'][$substep]['status'] = 0;
 
-			//any preparsing code here?
+			// any preparsing code here?
 			if (isset($steps->preparsecode) && !empty($steps->preparsecode))
 				$special_code = $this->fix_params((string) $steps->preparsecode);
 
@@ -582,17 +582,17 @@ class Importer
 
 			$template->status($substep, $_SESSION['import_steps'][$substep]['status'], $_SESSION['import_steps'][$substep]['title']);
 
-			//do we need to skip this step?
+			// do we need to skip this step?
 			if ($table_test === false || !in_array($substep, $do_steps))
 			{
-				//reset some defaults
+				// reset some defaults
 				$current_data = '';
 				$special_table = null;
 				$special_code = null;
 				continue;
 			}
 
-			//pre sql queries first!!
+			// pre sql queries first!!
 			if (isset($steps->presql) && !isset($_SESSION['import_steps'][$substep]['presql']))
 			{
 				$presql = $this->fix_params((string) $steps->presql);
@@ -605,7 +605,7 @@ class Importer
 				}
 				else
 					$db->query($presql);
-				//don't do this twice..
+				// don't do this twice..
 				$_SESSION['import_steps'][$substep]['presql'] = true;
 			}
 
@@ -629,13 +629,13 @@ class Importer
 				continue;
 			}
 
-			//codeblock?
+			// codeblock?
 			if (isset($steps->code))
 			{
-				//execute our code block
+				// execute our code block
 				$special_code = $this->fix_params((string) $steps->code);
 				eval($special_code);
-				//reset some defaults
+				// reset some defaults
 				$current_data = '';
 				$special_table = null;
 				$special_code = null;
@@ -646,7 +646,7 @@ class Importer
 				continue;
 			}
 
-			//sql block?
+			// sql block?
 			if (!empty($steps->query))
 			{
 				if (strpos($current_data, '{$') !== false)
@@ -663,7 +663,7 @@ class Importer
 					$db->free_result($result2);
 				}
 
-				//create some handy shortcuts
+				// create some handy shortcuts
 				$ignore = (isset($steps->options->ignore) && $steps->options->ignore == true && !isset($steps->options->replace)) ? true : false;
 				$replace = (isset($steps->options->replace) && $steps->options->replace == true) ? true : false;
 				$no_add = (isset($steps->options->no_add) && $steps->options->no_add == true) ? true : false;
@@ -744,7 +744,7 @@ class Importer
 									$row['real_name'] = strtr($row['real_name'], array('\'' => '&#039;'));
 							}
 
-							//prepare ip address conversion
+							// prepare ip address conversion
 							if (isset($this->xml->general->convert_ip))
 							{
 								$convert_ips = explode(',', $this->xml->general->convert_ip);
@@ -755,8 +755,12 @@ class Importer
 										$row[$ip] = $this->expand_ip($row[$ip]);
 								}
 							}
-							//inject our charset class, we need proper utf-8
+							// inject our charset class, we need proper utf-8
 							$row = Charset::fix($row);
+
+							// If we have a message here, we'll want to convert <br /> to <br>.
+							if (isset($row['body']))
+								$row['body'] = str_replace('<br />', '<br>', $row['body']);
 
 							if (empty($no_add) && empty($ignore_slashes))
 								$rows[] = "'" . implode("', '", helper::addslashes_recursive($row)) . "'";
@@ -948,7 +952,7 @@ class Importer
 			$row = $db->fetch_assoc($result);
 			$db->free_result($result);
 
-			// Update the latest member.  (highest ID_MEMBER)
+			// Update the latest member. (Highest ID_MEMBER)
 			$result = $db->query("
 				SELECT id_member AS latestMember, real_name AS latestreal_name
 				FROM {$to_prefix}members
@@ -1212,7 +1216,7 @@ class Importer
 					LIMIT 1");
 			}
 
-			// Leftovers should be brought to the root.  They had weird parents we couldn't find.
+			// Leftovers should be brought to the root. They had weird parents we couldn't find.
 			if (count($fixed_boards) < count($cat_map))
 			{
 				$db->query("
@@ -1449,7 +1453,7 @@ abstract class helper
 		if (isset($_GET['substep']) && $_GET['substep'] < $substep)
 			$_GET['substep'] = $substep;
 
-		//some details for our progress bar
+		// some details for our progress bar
 		if (isset($import->count->$substep) && $import->count->$substep > 0 && isset($_REQUEST['start']) && $_REQUEST['start'] > 0 && isset($substep))
 			$bar = round($_REQUEST['start'] / $import->count->$substep * 100, 0);
 		else
@@ -1788,7 +1792,7 @@ class Database
 		// Check columns
 		foreach ($knownColumns as $column => $value)
 		{
-			// Here we reverse things.  If the column is not in then we must add it.
+			// Here we reverse things. If the column is not in then we must add it.
 			if ($reverseColumns == false && in_array($column, $availableColumns))
 				unset($knownColumns[$column], $knownColumns[$column]);
 			// If it's in then we must unset it.
@@ -1829,14 +1833,12 @@ class Charset
 	// simple function to detect whether a string is utf-8 or not
 	private static function is_utf8($string)
 	{
-		return (utf8_encode(utf8_decode($string)) == $string);
+		return utf8_encode(utf8_decode($string)) == $string;
 	}
 
-	public static function fix($text)
-	{
 	/**
-	* Function fix based on ForceUTF8 by Sebastián Grignoli" <grignoli@framework2.com.ar
-	* @link     http://www.framework2.com.ar/dzone/forceUTF8-es/
+	* Function fix based on ForceUTF8 by Sebastián Grignoli <grignoli@framework2.com.ar>
+	* @link http://www.framework2.com.ar/dzone/forceUTF8-es/
 	* This function leaves UTF8 characters alone, while converting almost all non-UTF8 to UTF8.
 	*
 	* It may fail to convert characters to unicode if they fall into one of these scenarios:
@@ -1844,7 +1846,7 @@ class Charset
 	* 1) when any of these characters:   ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß
 	*    are followed by any of these:  ("group B")
 	*                                    ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶•¸¹º»¼½¾¿
-	* For example:   %ABREPRESENT%C9%BB. «REPRESENTÉ»
+	* For example:   %ABREPR%C9SENT%C9%BB. «REPRÉSENTÉ»
 	* The "«" (%AB) character will be converted, but the "É" followed by "»" (%C9%BB)
 	* is also a valid unicode character, and will be left unchanged.
 	*
@@ -1854,78 +1856,78 @@ class Charset
 	* @name fix
 	* @param string $text  Any string.
 	* @return string  The same string, UTF8 encoded
-	*
 	*/
-
-		if(is_array($text))
+	public static function fix($text)
+	{
+		if (is_array($text))
 		{
-			foreach($text as $k => $v)
+			foreach ($text as $k => $v)
 				$text[$k] = self::fix($v);
 			return $text;
 		}
 
 		// numeric? There's nothing to do, we simply return our input.
-		if(is_numeric($text))
+		if (is_numeric($text))
 			return $text;
 
 		$max = strlen($text);
 		$buf = '';
 
-		for($i = 0; $i < $max; $i++)
+		for ($i = 0; $i < $max; $i++)
 		{
 			$c1 = $text{$i};
-			if($c1 >= "\xc0")
+			if ($c1 >= "\xc0")
 			{
 				//Should be converted to UTF8, if it's not UTF8 already
 				$c2 = $i+1 >= $max? "\x00" : $text{$i+1};
 				$c3 = $i+2 >= $max? "\x00" : $text{$i+2};
 				$c4 = $i+3 >= $max? "\x00" : $text{$i+3};
-				if($c1 >= "\xc0" & $c1 <= "\xdf")
+				if ($c1 >= "\xc0" & $c1 <= "\xdf")
 				{
-					//looks like 2 bytes UTF8
-					if($c2 >= "\x80" && $c2 <= "\xbf")
+					// looks like 2 bytes UTF8
+					if ($c2 >= "\x80" && $c2 <= "\xbf")
 					{
-						//yeah, almost sure it's UTF8 already
+						// yeah, almost sure it's UTF8 already
 						$buf .= $c1 . $c2;
 						$i++;
 					}
 					else
 					{
-						//not valid UTF8.  Convert it.
+						// not valid UTF8. Convert it.
 						$cc1 = (chr(ord($c1) / 64) | "\xc0");
 						$cc2 = ($c1 & "\x3f") | "\x80";
 						$buf .= $cc1 . $cc2;
 					}
 				}
-				elseif($c1 >= "\xe0" & $c1 <= "\xef")
+				elseif ($c1 >= "\xe0" & $c1 <= "\xef")
 				{
-					//looks like 3 bytes UTF8
-					if($c2 >= "\x80" && $c2 <= "\xbf" && $c3 >= "\x80" && $c3 <= "\xbf")
+					// looks like 3 bytes UTF8
+					if ($c2 >= "\x80" && $c2 <= "\xbf" && $c3 >= "\x80" && $c3 <= "\xbf")
 					{
-						//yeah, almost sure it's UTF8 already
+						// yeah, almost sure it's UTF8 already
 						$buf .= $c1 . $c2 . $c3;
 						$i = $i + 2;
 					}
 					else
 					{
-						//not valid UTF8.  Convert it.
+						// not valid UTF8. Convert it.
 						$cc1 = (chr(ord($c1) / 64) | "\xc0");
 						$cc2 = ($c1 & "\x3f") | "\x80";
 						$buf .= $cc1 . $cc2;
 					}
 				}
-				elseif($c1 >= "\xf0" & $c1 <= "\xf7")
+				elseif ($c1 >= "\xf0" & $c1 <= "\xf7")
 				{
-					//looks like 4 bytes UTF8
-					if($c2 >= "\x80" && $c2 <= "\xbf" && $c3 >= "\x80" && $c3 <= "\xbf" && $c4 >= "\x80" && $c4 <= "\xbf")
+					// Looks like 4-byte UTF8
+					if ($c2 >= "\x80" && $c2 <= "\xbf" && $c3 >= "\x80" && $c3 <= "\xbf" && $c4 >= "\x80" && $c4 <= "\xbf")
 					{
-						//yeah, almost sure it's UTF8 already
+						// Yeah, almost sure it's UTF8 already
 						$buf .= $c1 . $c2 . $c3;
 						$i = $i + 2;
 					}
 					else
 					{
-						//not valid UTF8.  Convert it.
+						// Not valid UTF8. Convert it.
 						$cc1 = (chr(ord($c1) / 64) | "\xc0");
 						$cc2 = ($c1 & "\x3f") | "\x80";
 						$buf .= $cc1 . $cc2;
@@ -1933,31 +1935,40 @@ class Charset
 				}
 				else
 				{
-					//doesn't look like UTF8, but should be converted
+					// Doesn't look like UTF8, but should be converted
 					$cc1 = (chr(ord($c1) / 64) | "\xc0");
 					$cc2 = (($c1 & "\x3f") | "\x80");
 					$buf .= $cc1 . $cc2;
 				}
 			}
-			elseif(($c1 & "\xc0") == "\x80")
+			elseif (($c1 & "\xc0") == "\x80")
 			{
-				// needs conversion
+				// Needs conversion
 				$cc1 = (chr(ord($c1) / 64) | "\xc0");
 				$cc2 = (($c1 & "\x3f") | "\x80");
 				$buf .= $cc1 . $cc2;
 			}
 			else
-				// it doesn't need convesion
+				// Doesn't need conversion
 				$buf .= $c1;
 		}
-		//take care of html entities..
-		$entity_replace = create_function('$string', '
-			$num = substr($string, 0, 1) === \'x\' ? hexdec(substr($string, 1)) : (int) $string;
-			return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) ? \'\' : ($num < 0x80 ? \'&#\' . $num . \';\' : ($num < 0x800 ? chr(192 | $num >> 6) . chr(128 | $num & 63) : ($num < 0x10000 ? chr(224 | $num >> 12) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63) : chr(240 | $num >> 18) . chr(128 | $num >> 12 & 63) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63))));');
 
-		$buf = preg_replace('~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~e', '$entity_replace(\'\\2\')', $buf);
+		if (function_exists('mb_decode_numericentity'))
+			$buf = mb_decode_numericentity($buf, array(0x80, 0x2ffff, 0, 0xffff), 'UTF-8');
+		else
+		{
+			// Take care of html entities..
+			$entity_replace = create_function('$num', '
+				return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) ? \'\' :
+					  ($num < 0x80 ? \'&#\' . $num . \';\' : ($num < 0x800 ? chr(192 | $num >> 6) . chr(128 | $num & 63) :
+					  ($num < 0x10000 ? chr(224 | $num >> 12) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63) :
+					  chr(240 | $num >> 18) . chr(128 | $num >> 12 & 63) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63))));');
 
-		//surprise, surprise... the string
+			$buf = preg_replace('~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~e', '$entity_replace(\\2)', $buf);
+			$buf = preg_replace('~(&#x(\d{1,7}|x[0-9a-fA-F]{1,6});)~e', '$entity_replace(0x\\2)', $buf);
+		}
+
+		// surprise, surprise... the string
 		return $buf;
 	}
 }
@@ -2004,10 +2015,10 @@ class lng
 	*/
 	public static function loadLang()
 	{
-		//detect the browser language
+		// detect the browser language
 		$language = self::detect_browser_language();
 
-		//loop through the prefered languages and try to find the related language file
+		// loop through the prefered languages and try to find the related language file
 		foreach ($language as $key => $value)
 		{
 			if (file_exists(dirname(__FILE__) . '/import_' . $key . '.xml'))
@@ -2016,14 +2027,14 @@ class lng
 				break;
 			}
 		}
-		//english is still better than nothing
+		// english is still better than nothing
 		if (!isset($lngfile))
 		{
 			if (file_exists(dirname(__FILE__) . '/import_en.xml'))
 				$lngfile = dirname(__FILE__) . '/import_en.xml';
 		}
-		//ouch, we really should never arrive here..
-		if(!$lngfile)
+		// ouch, we really should never arrive here..
+		if (!$lngfile)
 			throw new Exception('Unable to detect language file!');
 
 		$langObj = simplexml_load_file($lngfile, 'SimpleXMLElement', LIBXML_NOCDATA);
@@ -2196,7 +2207,7 @@ class template
 				var from = "', isset($import->xml->general->settings) ? $import->xml->general->settings : 'null', '";
 				var to = "/Settings.php";
 
-				if(string == "path_to")
+				if (string == "path_to")
 					extend = to;
 				else
 					extend = from;
@@ -2399,7 +2410,7 @@ class template
 
 		if (!empty($_GET['step']) && ($_GET['step'] == 1 || $_GET['step'] == 2) && $inner == true)
 			echo '
-			<h2 style="margin-top: 2ex;">', lng::get('we.imp.importing'), '...</h2>
+			<h2 style="margin-top: 2ex">', lng::get('we.imp.importing'), '...</h2>
 			<div class="content"><p>';
 	}
 
@@ -2455,7 +2466,7 @@ class template
 				<form action="', $_SERVER['PHP_SELF'], '?step=1', isset($_REQUEST['debug']) ? '&amp;debug=' . $_REQUEST['debug'] : '', '" method="post">
 					<p>', lng::get('we.imp.locate_wedge'), '</p>
 					<div id="toggle_button">', lng::get('we.imp.advanced_options'), ' <span id="arrow_down" class="arrow">&#9660</span><span id="arrow_up" class="arrow">&#9650</span></div>
-					<dl id="advanced_options" style="display: none; margin-top: 5px;">
+					<dl id="advanced_options" style="display: none; margin-top: 5px">
 						<dt><label for="path_to">', lng::get('we.imp.path_to_wedge'), ':</label></dt>
 						<dd>
 							<input type="text" name="path_to" id="path_to" value="', $_POST['path_to'], '" size="60" onblur="validateField(\'path_to\')" />
@@ -2497,7 +2508,7 @@ class template
 						<dt><label for="db_pass">', lng::get('we.imp.database_passwd'),':</label></dt>
 						<dd>
 							<input type="password" name="db_pass" size="30" class="text" />
-							<div style="font-style: italic; font-size: smaller;">', lng::get('we.imp.database_verify'),'</div>
+							<div style="font-style: italic; font-size: smaller">', lng::get('we.imp.database_verify'),'</div>
 						</dd>';
 
 
@@ -2517,7 +2528,7 @@ class template
 
 		echo '
 					</dl>
-					<div align="right" style="margin: 1ex; margin-top: 0;"><input id="submit_button" name="submit_button" type="submit" value="', lng::get('we.imp.continue'),'" class="submit" /></div>
+					<div align="right" style="margin: 1ex; margin-top: 0"><input id="submit_button" name="submit_button" type="submit" value="', lng::get('we.imp.continue'),'" class="submit" /></div>
 				</form>
 			</div>';
 
@@ -2558,16 +2569,16 @@ class template
 	public function status($substep, $status, $title, $hide = false)
 	{
 		if (isset($title) && $hide == false)
-			echo '<span style="width: 250px; display: inline-block;">' . $title . '...</span> ';
+			echo '<span style="width: 250px; display: inline-block">' . $title . '...</span> ';
 
 		if ($status == 1)
-			echo '<span style="color: green;">&#x2714</span>';
+			echo '<span style="color: green">&#x2714</span>';
 
 		if ($status == 2)
-			echo '<span style="color: grey;">&#x2714</span> (', lng::get('we.imp.skipped'),')';
+			echo '<span style="color: grey">&#x2714</span> (', lng::get('we.imp.skipped'),')';
 
 		if ($status == 3)
-			echo '<span style="color: red;">&#x2718</span> (', lng::get('we.imp.not_found_skipped'),')';
+			echo '<span style="color: red">&#x2718</span> (', lng::get('we.imp.not_found_skipped'),')';
 
 		if ($status != 0)
 			echo '<br />';
@@ -2576,21 +2587,21 @@ class template
 	public function step2()
 	{
 		echo '
-				<span style="width: 250px; display: inline-block;">', lng::get('we.imp.recalculate'), '...</span> ';
+				<span style="width: 250px; display: inline-block">', lng::get('we.imp.recalculate'), '...</span> ';
 	}
 
 	public function step3($name, $boardurl, $writable)
 	{
 		echo '
 			</div>
-			<h2 style="margin-top: 2ex;">', lng::get('we.imp.complete'), '</h2>
+			<h2 style="margin-top: 2ex">', lng::get('we.imp.complete'), '</h2>
 			<div class="content">
 			<p>', lng::get('we.imp.congrats'),'</p>';
 
 		if ($writable)
 			echo '
-				<div style="margin: 1ex; font-weight: bold;">
-					<label for="delete_self"><input type="checkbox" id="delete_self" onclick="doTheDelete();" />', lng::get('we.imp.check_box'), '</label>
+				<div style="margin: 1ex; font-weight: bold">
+					<label for="delete_self"><input type="checkbox" id="delete_self" onclick="doTheDelete()" />', lng::get('we.imp.check_box'), '</label>
 				</div>
 				<script type="text/javascript"><!-- // --><![CDATA[
 					function doTheDelete()
@@ -2612,18 +2623,18 @@ class template
 		if (isset($bar))
 			echo '
 			<div id="progressbar">
-				<div id="inner_bar" style="width:', $bar, '%;"></div>
+				<div id="inner_bar" style="width:', $bar, '%"></div>
 			</div>';
 
 		echo '
 		</div>
-		<h2 style="margin-top: 2ex;">', lng::get('we.imp.not_done'),'</h2>
+		<h2 style="margin-top: 2ex">', lng::get('we.imp.not_done'),'</h2>
 		<div class="content">
 			<p>', lng::get('we.imp.importer_paused'),'</p>';
 
 		echo '
 			<form action="', $_SERVER['PHP_SELF'], '?step=', $_GET['step'], isset($_GET['substep']) ? '&amp;substep=' . $_GET['substep'] : '', '&amp;start=', $_REQUEST['start'], '" method="post" name="autoSubmit">
-				<div align="right" style="margin: 1ex;"><input name="b" type="submit" value="', lng::get('we.imp.continue'),'" /></div>
+				<div align="right" style="margin: 1ex"><input name="b" type="submit" value="', lng::get('we.imp.continue'),'" /></div>
 			</form>';
 
 		echo '
@@ -2650,7 +2661,7 @@ class template
 	{
 		global $import;
 
-		if(isset($_GET['doStep']) && isset($_GET['bypass']))
+		if (isset($_GET['doStep']) && isset($_GET['bypass']))
 		{
 			$temp = unserialize($_GET['bypass']);
 			foreach ($temp as $key => $value)
@@ -2658,9 +2669,9 @@ class template
 
 			$json = array(
 				'status' => '1',
-				'next' => '2');
+				'next' => '2'
+			);
 
-			//echo json_encode($json);
 			return true;
 		}
 
@@ -2682,7 +2693,7 @@ class template
 	echo '
 		<div id="ajax_progress"></div>
 			<script type="text/javascript">
-				//define these variables
+				// define these variables
 				var interval = \'5000\';
 				var file = \'import.php?xml=true&doStep=true&bypass=', $bypass, '\';
 				var myelement = \'ajax_progress\';
@@ -2692,10 +2703,10 @@ class template
 				{
 					var req;
 
-					if(window.XMLHttpRequest)
+					if (window.XMLHttpRequest)
 						req = new XMLHttpRequest();
 
-					else if(window.ActiveXObject)
+					else if (window.ActiveXObject)
 						req = new ActiveXObject("Microsoft.XMLHTTP");
 
 					return req;
@@ -2717,11 +2728,11 @@ class template
 				function handleResponse()
 				{
 
-					if(http.readyState == 4 && http.status == 200)
+					if (http.readyState == 4 && http.status == 200)
 					{
 						// the PHP output
 						var response = http.responseText;
-						//json = eval(\'(\'+ http.responseText +\')\');
+						// json = eval(\'(\'+ http.responseText +\')\');
 						if (response)
 							document.getElementById(myelement).innerHTML = response;
 					}
@@ -2782,7 +2793,7 @@ class Cookie
 
 	public function set($data, $name = 'wedge_importer_cookie')
 	{
-		if(!empty($data))
+		if (!empty($data))
 		{
 			setcookie($name, serialize($data), time()+ 86400);
 			$_COOKIE[$name] = serialize($data);
@@ -2813,7 +2824,7 @@ class Cookie
 	public function extend($data, $name = 'wedge_importer_cookie')
 	{
 		$cookie = unserialize($_COOKIE[$name]);
-		if(!empty($cookie) && isset($data))
+		if (!empty($cookie) && isset($data))
 			$merged = array_merge((array)$cookie, (array)$data);
 
 		$this->set($merged);
