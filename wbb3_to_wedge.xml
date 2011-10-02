@@ -350,7 +350,7 @@
 			GROUP BY id_poll, id_member;
 		</query>
 	</step>
-		<step>
+	<step>
 		<title>Importing personal messages</title>
 		<detect>{$from_prefix}{$wcf_prefix}pm</detect>
 		<destination>{$to_prefix}personal_messages</destination>
@@ -435,7 +435,7 @@
 	</step>
 	<step>
 		<title>Importing topic notifications</title>
-		<detect>$from_prefix}{$wbb_prefix}thread_subscription</detect>
+		<detect>{$from_prefix}{$wbb_prefix}thread_subscription</detect>
 		<destination>{$to_prefix}log_notify</destination>
 		<presql>
 			TRUNCATE {$to_prefix}log_notify;
@@ -448,7 +448,7 @@
 	</step>
 	<step>
 		<title>Importing board notifications</title>
-		<detect>$from_prefix}{$wbb_prefix}board_subscription</detect>
+		<detect>{$from_prefix}{$wbb_prefix}board_subscription</detect>
 		<destination>{$to_prefix}log_notify</destination>
 		<query>
 			SELECT
