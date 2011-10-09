@@ -8,12 +8,88 @@
 		<from_prefix>`$dbname`.$table_prefix</from_prefix>
 		<table_test>{$from_prefix}users</table_test>
 		<convert_ip>member_ip, member_ip2, poster_ip</convert_ip>
-		<custom_functions>
+		<custom_functions><![CDATA[
 			function percent_to_px($percent)
 			{
 				return intval(11*(intval($percent)/100.0));
 			}
-		</custom_functions>
+			function phpbb_replace_bbc($message)
+			{
+				$message = preg_replace(
+					array(
+						'~\[quote=&quot;(.+?)&quot;\:(.+?)\]~is',
+						'~\[quote\:(.+?)\]~is',
+						'~\[/quote\:(.+?)\]~is',
+						'~\[b\:(.+?)\]~is',
+						'~\[/b\:(.+?)\]~is',
+						'~\[i\:(.+?)\]~is',
+						'~\[/i\:(.+?)\]~is',
+						'~\[u\:(.+?)\]~is',
+						'~\[/u\:(.+?)\]~is',
+						'~\[url\:(.+?)\]~is',
+						'~\[/url\:(.+?)\]~is',
+						'~\[url=(.+?)\:(.+?)\]~is',
+						'~\[/url\:(.+?)\]~is',
+						'~\<a(.+?) href="(.+?)">(.+?)</a>~is',
+						'~\[img\:(.+?)\]~is',
+						'~\[/img\:(.+?)\]~is',
+						'~\[size=(.+?)\:(.+?)\]~is',
+						'~\[/size\:(.+?)?\]~is',
+						'~\[color=(.+?)\:(.+?)\]~is',
+						'~\[/color\:(.+?)\]~is',
+						'~\[code=(.+?)\:(.+?)\]~is',
+						'~\[code\:(.+?)\]~is',
+						'~\[/code\:(.+?)\]~is',
+						'~\[list=(.+?)\:(.+?)\]~is',
+						'~\[list\:(.+?)\]~is',
+						'~\[/list\:(.+?)\]~is',
+						'~\[\*\:(.+?)\]~is',
+						'~\[/\*\:(.+?)\]~is',
+						'~\<img src=\"{SMILIES_PATH}/(.+?)\" alt=\"(.+?)\" title=\"(.+?)\" /\>~is',
+					),
+					array(
+						'[quote author="$1"]',
+						'[quote]',
+						'[/quote]',
+						'[b]',
+						'[/b]',
+						'[i]',
+						'[/i]',
+						'[u]',
+						'[/u]',
+						'[url]',
+						'[/url]',
+						'[url=$1]',
+						'[/url]',
+						'[url=$2]$3[/url]',
+						'[img]',
+						'[/img]',
+						'[size=' . percent_to_px("\1") . 'px]',
+						'[/size]',
+						'[color=$1]',
+						'[/color]',
+						'[code=$1]',
+						'[code]',
+						'[/code]',
+						'[list type=$1]',
+						'[list]',
+						'[/list]',
+						'[li]',
+						'[/li]',
+						'$2',
+					), $message);
+
+				$message = preg_replace('~\[size=(.+?)px\]~is', "[size=" . ('\1' > '99' ? 99 : '"\1"') . "px]", $message);
+
+				$message = strtr($message, array(
+					'[list type=1]' => '[list type=decimal]',
+					'[list type=a]' => '[list type=lower-alpha]',
+				));
+				$message = stripslashes($message);
+			
+				return $message;
+			}
+		]]></custom_functions>
 	</general>
 	<step type="mandatory">
 		<title>Importing Members</title>
@@ -23,6 +99,9 @@
 			TRUNCATE {$to_prefix}members;
 		</presql>
 		<preparsecode>
+			$row['signature'] = phpbb_replace_bbc($row['signature']);
+			$row['signature'] = str_replace($row['tmp_bbc_replace'], '', $row['signature']);
+			unset($row['tmp_bbc_replace']);
 		</preparsecode>
 		<query>
 			SELECT
@@ -39,7 +118,8 @@
 				SUBSTRING(u.user_website, 1, 255) AS website_url,
 				u.user_allow_viewonline AS show_online, u.user_timezone AS time_offset,
 				IF(u.user_allow_viewemail = 1, 0, 1) AS hide_email, u.user_avatar AS avatar,
-				u.user_sig AS signature, u.user_notify_pm AS pm_email_notify,
+				u.user_sig AS signature, u.user_sig_bbcode_uid AS tmp_bbc_replace,
+				u.user_notify_pm AS pm_email_notify,
 				CASE u.user_inactive_reason WHEN 0 THEN 1 ELSE 0 END AS is_activated,
 				u.user_ip AS member_ip
 			FROM {$from_prefix}users AS u
@@ -128,81 +208,11 @@
 			<slashes>true</slashes>
 			<limit>100</limit>
 		</options>
-		<preparsecode><![CDATA[
-			$row['body'] = preg_replace(
-				array(
-					'~\[quote=&quot;(.+?)&quot;\:(.+?)\]~is',
-					'~\[quote\:(.+?)\]~is',
-					'~\[/quote\:(.+?)\]~is',
-					'~\[b\:(.+?)\]~is',
-					'~\[/b\:(.+?)\]~is',
-					'~\[i\:(.+?)\]~is',
-					'~\[/i\:(.+?)\]~is',
-					'~\[u\:(.+?)\]~is',
-					'~\[/u\:(.+?)\]~is',
-					'~\[url\:(.+?)\]~is',
-					'~\[/url\:(.+?)\]~is',
-					'~\[url=(.+?)\:(.+?)\]~is',
-					'~\[/url\:(.+?)\]~is',
-					'~\<a(.+?) href="(.+?)">(.+?)</a>~is',
-					'~\[img\:(.+?)\]~is',
-					'~\[/img\:(.+?)\]~is',
-					'~\[size=(.+?)\:(.+?)\]~is',
-					'~\[/size\:(.+?)?\]~is',
-					'~\[color=(.+?)\:(.+?)\]~is',
-					'~\[/color\:(.+?)\]~is',
-					'~\[code=(.+?)\:(.+?)\]~is',
-					'~\[code\:(.+?)\]~is',
-					'~\[/code\:(.+?)\]~is',
-					'~\[list=(.+?)\:(.+?)\]~is',
-					'~\[list\:(.+?)\]~is',
-					'~\[/list\:(.+?)\]~is',
-					'~\[\*\:(.+?)\]~is',
-					'~\[/\*\:(.+?)\]~is',
-					'~\<img src=\"{SMILIES_PATH}/(.+?)\" alt=\"(.+?)\" title=\"(.+?)\" /\>~is',
-				),
-				array(
-					'[quote author="$1"]',
-					'[quote]',
-					'[/quote]',
-					'[b]',
-					'[/b]',
-					'[i]',
-					'[/i]',
-					'[u]',
-					'[/u]',
-					'[url]',
-					'[/url]',
-					'[url=$1]',
-					'[/url]',
-					'[url=$2]$3[/url]',
-					'[img]',
-					'[/img]',
-					'[size=' . percent_to_px("\1") . 'px]',
-					'[/size]',
-					'[color=$1]',
-					'[/color]',
-					'[code=$1]',
-					'[code]',
-					'[/code]',
-					'[list type=$1]',
-					'[list]',
-					'[/list]',
-					'[li]',
-					'[/li]',
-					'$2',
-				), $row['body']);
-
-			$row['body'] = preg_replace('~\[size=(.+?)px\]~is', "[size=" . ('\1' > '99' ? 99 : '"\1"') . "px]", $row['body']);
-
-			$row['body'] = strtr($row['body'], array(
-				'[list type=1]' => '[list type=decimal]',
-				'[list type=a]' => '[list type=lower-alpha]',
-			));
-			$row['body'] = stripslashes($row['body']);
+		<preparsecode>
+			$row['body'] = phpbb_replace_bbc($row['body']);
 			$row['body'] = str_replace($row['tmp_bbc_replace'], '', $row['body']);
 			unset($row['tmp_bbc_replace']);
-		]]></preparsecode>
+		</preparsecode>
 		<query>
 			SELECT
 				p.post_id AS id_msg, p.topic_id AS id_topic, p.forum_id AS id_board,
@@ -273,11 +283,15 @@
 			TRUNCATE {$to_prefix}pm_recipients;
 		</presql>
 		<preparsecode>
+			$row['body'] = phpbb_replace_bbc($row['body']);
+			$row['body'] = str_replace($row['tmp_bbc_replace'], '', $row['body']);
+			unset($row['tmp_bbc_replace']);
 		</preparsecode>
 		<query><![CDATA[
 			SELECT
 				pm.msg_id AS id_pm, pm.author_id AS id_member_from, pm.message_time AS msgtime,
 				SUBSTRING(uf.username, 1, 255) AS from_name, SUBSTRING(pm.message_subject, 1, 255) AS subject,
+				pm.bbcode_uid AS tmp_bbc_replace,
 				SUBSTRING(REPLACE(IF(pm.bbcode_uid = '', pm.message_text, 
 				REPLACE(REPLACE(pm.message_text, CONCAT(':1:', pm.bbcode_uid), ''), CONCAT(':', pm.bbcode_uid), '')), '\n', '<br>'), 1, 65534) AS body
 			FROM {$from_prefix}privmsgs AS pm
@@ -292,7 +306,8 @@
 			SELECT
 				pm.msg_id AS id_pm, pm.user_id AS id_member, '-1' AS labels,
 				CASE pm.pm_unread WHEN 1 THEN 0 ELSE 1 END AS is_read, pm.pm_deleted AS deleted
-			FROM {$from_prefix}privmsgs_to AS pm;
+			FROM {$from_prefix}privmsgs_to AS pm
+			GROUP BY pm.msg_id;
 		</query>
 	</step>
 
