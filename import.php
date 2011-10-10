@@ -289,7 +289,7 @@ class Importer
 		$this->boardurl = $boardurl;
 
 		if ($_SESSION['import_db_pass'] != $db_passwd)
-			return $this->doStep0(lng::get('we.imp.password_incorrect'));
+			return $this->doStep0(lng::get('we.imp.password_incorrect'), $this);
 
 		// Check the steps that we have decided to go through.
 		if (!isset($_POST['do_steps']) && !isset($_SESSION['do_steps']))
@@ -477,10 +477,11 @@ class Importer
 		return self::INVALID_IP;
 	}
 
-	public function doStep0($error_message = null)
+	public function doStep0($error_message = null, $object = false)
 	{
-		global $db, $template, $to_prefix, $import_script, $cookie;
+		global $db, $template, $to_prefix, $import_script, $cookie, $import;
 
+		$import = isset($object) ? $object : false;
 		$cookie -> destroy();
 		unset($_SESSION['import_steps']);
 
@@ -2765,6 +2766,8 @@ class import_exception extends Exception
 {
 	public static function error_handler_callback($code, $string, $file, $line, $context)
 	{
+		global $import;
+
 		$e = new self($string, $code);
 		$e->line = $line;
 		$e->file = $file;
