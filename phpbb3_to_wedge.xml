@@ -7,7 +7,8 @@
 		<defines>IN_PHPBB</defines>
 		<from_prefix>`$dbname`.$table_prefix</from_prefix>
 		<table_test>{$from_prefix}users</table_test>
-		<convert_ip>member_ip, member_ip2, poster_ip</convert_ip>
+		<ip_to_ipv6>member_ip, member_ip2</ip_to_ipv6>
+		<ip_to_pointer>poster_ip</ip_to_pointer>
 		<custom_functions><![CDATA[
 			function percent_to_px($percent)
 			{

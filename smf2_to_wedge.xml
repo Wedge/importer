@@ -7,7 +7,8 @@
 		<from_prefix>`$db_name`.$db_prefix</from_prefix>
 		<table_test>{$from_prefix}members;</table_test>
 		<defines>SMF=1</defines>
-		<convert_ip>member_ip, member_ip2, poster_ip, ip</convert_ip>
+		<ip_to_ipv6>member_ip, member_ip2, ip</ip_to_ipv6>
+		<ip_to_pointer>poster_ip</ip_to_pointer>
 	</general>
 	<step>
 		<title>Importing settings</title>

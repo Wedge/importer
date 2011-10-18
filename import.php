@@ -522,7 +522,7 @@ class Importer
 
 	public function doStep1()
 	{
-		global $db, $template, $cookie;
+		global $db, $template, $cookie, $to_prefix;
 
 		if ($this->xml->general->globals)
 		{
@@ -746,14 +746,51 @@ class Importer
 							}
 
 							// prepare ip address conversion
-							if (isset($this->xml->general->convert_ip))
+							if (isset($this->xml->general->ip_to_ipv6))
 							{
-								$convert_ips = explode(',', $this->xml->general->convert_ip);
+								$convert_ips = explode(',', $this->xml->general->ip_to_ipv6);
 								foreach ($convert_ips as $ip)
 								{
 									$ip = trim($ip);
 									if (array_key_exists($ip, $row))
 										$row[$ip] = $this->expand_ip($row[$ip]);
+								}
+							}
+							// prepare ip address conversion to a pointer
+							if (isset($this->xml->general->ip_to_pointer))
+							{
+								$ips_to_pointer = explode(',', $this->xml->general->ip_to_pointer);
+								foreach ($ips_to_pointer as $ip)
+								{
+									$ip = trim($ip);
+									if (array_key_exists($ip, $row))
+									{
+										$ipv6ip = $this->expand_ip($row[$ip]);
+										
+										$request2 = $db->query("
+											SELECT id_ip
+											FROM {$to_prefix}log_ips
+											WHERE member_ip = '" . $ipv6ip . "'
+											LIMIT 1");
+										//ip already  known?
+										if ($db->num_rows($request2) != 0)
+										{
+											list ($id_ip) = $db->fetch_row($request2);
+											$row[$ip] = $id_ip;
+										}
+										// insert the new ip
+										else
+										{
+											$db->query("
+												INSERT INTO {$to_prefix}log_ips
+													(member_ip)
+												VALUES ('$ipv6ip')");
+											$pointer = $db->insert_id();
+											$row[$ip] = $pointer;
+										}
+	
+										$db->free_result($request2);
+									}
 								}
 							}
 							// inject our charset class, we need proper utf-8
@@ -1736,6 +1773,10 @@ class Database
 	public function num_rows($result)
 	{
 		return mysql_num_rows($result);
+	}
+	public function insert_id()
+	{
+		return mysql_insert_id();
 	}
 
 	public function alter_table($tableName, $knownKeys = '', $knownColumns = '', $alterColumns = '', $reverseKeys = false, $reverseColumns = false, $return_error = false)

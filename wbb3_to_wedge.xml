@@ -11,7 +11,8 @@
 		<from_prefix>`$dbName`.</from_prefix>
 		<table_test>{$from_prefix}{$wbb_prefix}user;</table_test>
 		<globals>$userOptions</globals>
-		<convert_ip>member_ip, member_ip2, poster_ip</convert_ip>
+		<ip_to_ipv6>member_ip, member_ip2</ip_to_ipv6>
+		<ip_to_pointer>poster_ip</ip_to_pointer>
 	</general>
 	<step type="mandatory">
 		<title>Analysing WCF options</title>
