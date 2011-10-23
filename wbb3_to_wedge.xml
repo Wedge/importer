@@ -13,6 +13,65 @@
 		<globals>$userOptions</globals>
 		<ip_to_ipv6>member_ip, member_ip2</ip_to_ipv6>
 		<ip_to_pointer>poster_ip</ip_to_pointer>
+		<custom_functions>
+			function wbb_replace_bbc($message)
+			{
+				$row['body'] = preg_replace(
+					array(
+						'~\[size=(.+?)\]~is',
+						'~\[align=left\](.+?)\[\/align\]~is',
+						'~\[align=right\](.+?)\[\/align\]~is',
+						'~\[align=center\](.+?)\[\/align\]~is',
+						'~\[align=justify\](.+?)\[\/align\]~is',
+						'~.Geneva, Arial, Helvetica, sans-serif.~is',
+						'~.Tahoma, Arial, Helvetica, sans-serif.~is',
+						'~.Arial, Helvetica, sans-serif.~is',
+						'~.Chicago, Impact, Compacta, sans-serif.~is',
+						'~.Comic Sans MS, sans-serif.~is',
+						'~.Courier New, Courier, mono.~is',
+						'~.Georgia, Times New Roman, Times, serif.~is',
+						'~.Helvetica, Verdana, sans-serif.~is',
+						'~.Impact, Compacta, Chicago, sans-serif.~is',
+						'~.Lucida Sans, Monaco, Geneva, sans-serif.~is',
+						'~.Times New Roman, Times, Georgia, serif.~is',
+						'~.Trebuchet MS, Arial, sans-serif.~is',
+						'~.Verdana, Helvetica, sans-serif.~is',
+						'~\[list=1\]\[\*\]~is',
+						'~\[list\]\[\*\]~is',
+						'~\[\*\]~is',
+						'~\[\/list\]~is',
+						'~\[attach\](.+?)\[\/attach\]~is'
+					),
+					array(
+						'[size=$1pt]',
+						'[left]$1[/left]',
+						'[right]$1[/right]',
+						'[center]$1[/center]',
+						'$1',
+						'Geneva',
+						'Tahoma',
+						'Arial',
+						'Chicago',
+						'Comic Sans MS',
+						'Courier New',
+						'Georgia',
+						'Helvetica',
+						'Impact',
+						'Lucida Sans',
+						'Times New Roman',
+						'Trebuchet MS',
+						'Verdana',
+						'[list type=decimal][li]',
+						'[list][li]',
+						'[/li][li]',
+						'[/li][/list]',
+						'',
+					),
+					trim($message)
+				);
+				return $message;
+			}
+		</custom_functions>
 	</general>
 	<step type="mandatory">
 		<title>Analysing WCF options</title>
@@ -58,57 +117,7 @@
 			}
 			$db->free_result($request);
 
-			$row['signature'] = preg_replace(
-				array(
-					'~\[size=(.+?)\]~is',
-					'~\[align=left\](.+?)\[\/align\]~is',
-					'~\[align=right\](.+?)\[\/align\]~is',
-					'~\[align=center\](.+?)\[\/align\]~is',
-					'~\[align=justify\](.+?)\[\/align\]~is',
-					'~.Geneva, Arial, Helvetica, sans-serif.~is',
-					'~.Tahoma, Arial, Helvetica, sans-serif.~is',
-					'~.Arial, Helvetica, sans-serif.~is',
-					'~.Chicago, Impact, Compacta, sans-serif.~is',
-					'~.Comic Sans MS, sans-serif.~is',
-					'~.Courier New, Courier, mono.~is',
-					'~.Georgia, Times New Roman, Times, serif.~is',
-					'~.Helvetica, Verdana, sans-serif.~is',
-					'~.Impact, Compacta, Chicago, sans-serif.~is',
-					'~.Lucida Sans, Monaco, Geneva, sans-serif.~is',
-					'~.Times New Roman, Times, Georgia, serif.~is',
-					'~.Trebuchet MS, Arial, sans-serif.~is',
-					'~.Verdana, Helvetica, sans-serif.~is',
-					'~\[list=1\]\[\*\]~is',
-					'~\[list\]\[\*\]~is',
-					'~\[\*\]~is',
-					'~\[\/list\]~is',
-				),
-				array(
-					'[size=$1pt]',
-					'[left]$1[/left]',
-					'[right]$1[/right]',
-					'[center]$1[/center]',
-					'$1',
-					'Geneva',
-					'Tahoma',
-					'Arial',
-					'Chicago',
-					'Comic Sans MS',
-					'Courier New',
-					'Georgia',
-					'Helvetica',
-					'Impact',
-					'Lucida Sans',
-					'Times New Roman',
-					'Trebuchet MS',
-					'Verdana',
-					'[list type=decimal][li]',
-					'[list][li]',
-					'[/li][li]',
-					'[/li][/list]',
-				),
-				trim($row['signature'])
-			);
+			$row['signature'] = wbb_replace_bbc($row['signature']);
 
 			/* load wbb userOptions */
 			$request = $db->query("
@@ -135,11 +144,11 @@
 		</preparsecode>
 		<query>
 			SELECT
-				u.userID AS id_member, SUBSTRING(u.username, 1, 80) AS member_name,
+				u.userID AS id_member, SUBSTRING(u.username, 1, 80) AS member_name, '' AS buddy_list,
 				IF (p.Posts IS NULL, 0, p.Posts) AS posts, u.registrationDate AS date_registered,
 				u.lastActivityTime AS last_login,SUBSTRING(u.username, 1, 255) AS real_name,
-				u.password AS passwd, SUBSTRING(u.email, 1, 64) AS email_address,
-				1 AS show_online, 0 AS id_group, 1 AS hide_email, 
+				u.password AS passwd, SUBSTRING(u.email, 1, 64) AS email_address, '' AS message_labels,
+				1 AS show_online, 0 AS id_group, 1 AS hide_email, '' AS openid_uri, '' AS ignore_boards,
 				SUBSTRING(u.signature, 1, 65534) AS signature, salt AS password_salt
 			FROM {$from_prefix}wcf1_user AS u
 				LEFT JOIN {$from_prefix}{$wbb_prefix}user AS p ON (u.userID = p.UserID);
@@ -169,7 +178,7 @@
 		</presql>
 		<query>
 			SELECT
-				b.boardID AS id_board, o.parentID AS id_parent, o.position AS board_order,
+				b.boardID AS id_board, o.parentID AS id_parent, o.position AS board_order, 0 AS id_cat,
 				SUBSTRING(b.title, 1, 255) AS name, SUBSTRING(b.description, 1, 65534) AS description,
 				b.threads AS num_topics, b.countUserPosts AS num_posts, '2,-1,0,1' AS member_groups,
 				CONCAT('board_', b.boardID) as url
@@ -226,59 +235,7 @@
 			<limit>100</limit>
 		</options>
 		<preparsecode>
-			$row['body'] = preg_replace(
-				array(
-					'~\[size=(.+?)\]~is',
-					'~\[align=left\](.+?)\[\/align\]~is',
-					'~\[align=right\](.+?)\[\/align\]~is',
-					'~\[align=center\](.+?)\[\/align\]~is',
-					'~\[align=justify\](.+?)\[\/align\]~is',
-					'~.Geneva, Arial, Helvetica, sans-serif.~is',
-					'~.Tahoma, Arial, Helvetica, sans-serif.~is',
-					'~.Arial, Helvetica, sans-serif.~is',
-					'~.Chicago, Impact, Compacta, sans-serif.~is',
-					'~.Comic Sans MS, sans-serif.~is',
-					'~.Courier New, Courier, mono.~is',
-					'~.Georgia, Times New Roman, Times, serif.~is',
-					'~.Helvetica, Verdana, sans-serif.~is',
-					'~.Impact, Compacta, Chicago, sans-serif.~is',
-					'~.Lucida Sans, Monaco, Geneva, sans-serif.~is',
-					'~.Times New Roman, Times, Georgia, serif.~is',
-					'~.Trebuchet MS, Arial, sans-serif.~is',
-					'~.Verdana, Helvetica, sans-serif.~is',
-					'~\[list=1\]\[\*\]~is',
-					'~\[list\]\[\*\]~is',
-					'~\[\*\]~is',
-					'~\[\/list\]~is',
-					'~\[attach\](.+?)\[\/attach\]~is'
-				),
-				array(
-					'[size=$1pt]',
-					'[left]$1[/left]',
-					'[right]$1[/right]',
-					'[center]$1[/center]',
-					'$1',
-					'Geneva',
-					'Tahoma',
-					'Arial',
-					'Chicago',
-					'Comic Sans MS',
-					'Courier New',
-					'Georgia',
-					'Helvetica',
-					'Impact',
-					'Lucida Sans',
-					'Times New Roman',
-					'Trebuchet MS',
-					'Verdana',
-					'[list type=decimal][li]',
-					'[list][li]',
-					'[/li][li]',
-					'[/li][/list]',
-					'',
-				),
-				trim($row['body'])
-			);
+			$row['body'] = wbb_replace_bbc($row['body']);
 		</preparsecode>
 		<query>
 			SELECT
@@ -342,7 +299,6 @@
 		<title>Importing poll votes</title>
 		<detect>{$from_prefix}{$wcf_prefix}poll</detect>
 		<destination>{$to_prefix}log_polls</destination>
-		<presql>ALTER TABLE  `wedge_poll_choices` DROP  `old_choice`;</presql>
 		<query>
 			SELECT
 				v.pollID AS id_poll, v.userID AS id_member, c.id_choice AS id_choice
@@ -356,63 +312,12 @@
 		<detect>{$from_prefix}{$wcf_prefix}pm</detect>
 		<destination>{$to_prefix}personal_messages</destination>
 		<presql>
+			ALTER TABLE {$to_prefix}poll_choices DROP old_choice;
 			TRUNCATE {$to_prefix}personal_messages;
 			TRUNCATE {$to_prefix}pm_recipients;
 		</presql>
 		<preparsecode>
-			$row['body'] = preg_replace(
-				array(
-					'~\[size=(.+?)\]~is',
-					'~\[align=left\](.+?)\[\/align\]~is',
-					'~\[align=right\](.+?)\[\/align\]~is',
-					'~\[align=center\](.+?)\[\/align\]~is',
-					'~\[align=justify\](.+?)\[\/align\]~is',
-					'~.Geneva, Arial, Helvetica, sans-serif.~is',
-					'~.Tahoma, Arial, Helvetica, sans-serif.~is',
-					'~.Arial, Helvetica, sans-serif.~is',
-					'~.Chicago, Impact, Compacta, sans-serif.~is',
-					'~.Comic Sans MS, sans-serif.~is',
-					'~.Courier New, Courier, mono.~is',
-					'~.Georgia, Times New Roman, Times, serif.~is',
-					'~.Helvetica, Verdana, sans-serif.~is',
-					'~.Impact, Compacta, Chicago, sans-serif.~is',
-					'~.Lucida Sans, Monaco, Geneva, sans-serif.~is',
-					'~.Times New Roman, Times, Georgia, serif.~is',
-					'~.Trebuchet MS, Arial, sans-serif.~is',
-					'~.Verdana, Helvetica, sans-serif.~is',
-					'~\[list=1\]\[\*\]~is',
-					'~\[list\]\[\*\]~is',
-					'~\[\*\]~is',
-					'~\[\/list\]~is',
-					'~\[attach\](.+?)\[\/attach\]~is'
-				),
-				array(
-					'[size=$1pt]',
-					'[left]$1[/left]',
-					'[right]$1[/right]',
-					'[center]$1[/center]',
-					'$1',
-					'Geneva',
-					'Tahoma',
-					'Arial',
-					'Chicago',
-					'Comic Sans MS',
-					'Courier New',
-					'Georgia',
-					'Helvetica',
-					'Impact',
-					'Lucida Sans',
-					'Times New Roman',
-					'Trebuchet MS',
-					'Verdana',
-					'[list type=decimal][li]',
-					'[list][li]',
-					'[/li][li]',
-					'[/li][/list]',
-					'',
-				),
-				trim($row['body'])
-			);
+			$row['body'] = wbb_replace_bbc($row['body']);
 		</preparsecode>
 		<query>
 			SELECT
