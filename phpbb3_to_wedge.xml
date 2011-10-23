@@ -109,12 +109,12 @@
 				u.user_id AS id_member, SUBSTRING(u.username, 1, 80) AS member_name,
 				SUBSTRING(u.username, 1, 255) AS real_name,
 				SUBSTRING(u.user_password, 1, 64) AS passwd, u.user_lastvisit AS last_login,
-				u.user_regdate AS date_registered,
+				u.user_regdate AS date_registered, '' AS buddy_list,
 				SUBSTRING(u.user_from, 1, 255) AS location,
 				u.user_posts AS posts, IF(u.user_rank = 1, 1, IFNULL(mg.id_group, 0)) AS id_group,
-				u.user_new_privmsg AS instant_messages,
-				SUBSTRING(u.user_email, 1, 255) AS email_address,
-				u.user_unread_privmsg AS unread_messages,
+				u.user_new_privmsg AS instant_messages, '' AS message_labels,
+				SUBSTRING(u.user_email, 1, 255) AS email_address, '' AS openid_uri,
+				u.user_unread_privmsg AS unread_messages, '' AS ignore_boards,
 				SUBSTRING(u.user_website, 1, 255) AS website_title,
 				SUBSTRING(u.user_website, 1, 255) AS website_url,
 				u.user_allow_viewonline AS show_online, u.user_timezone AS time_offset,
@@ -190,11 +190,18 @@
 		<query>
 			SELECT
 				t.topic_id AS id_topic, t.forum_id AS id_board, t.topic_first_post_id AS id_first_msg,
-				CASE t.topic_type WHEN 1 THEN 1 WHEN 2 THEN 1 ELSE 0 END AS is_sticky,
+				CASE t.topic_type 
+					WHEN 1 THEN 1 
+					WHEN 2 THEN 1 
+					ELSE 0 
+				END AS is_sticky,
 				t.topic_last_post_id AS id_last_msg, t.topic_poster AS id_member_started,
-				t.topic_last_poster_id AS id_member_updated, po.topic_id AS id_poll,
+				t.topic_last_poster_id AS id_member_updated, IF(po.topic_id > 0, po.topic_id, 0) AS id_poll,
 				t.topic_replies AS num_replies, t.topic_views AS num_views,
-				CASE t.topic_status WHEN 1 THEN 1 ELSE 0 END AS locked
+				CASE t.topic_status 
+					WHEN 1 THEN 1 
+					ELSE 0 
+				END AS locked
 			FROM {$from_prefix}topics AS t
 				LEFT JOIN {$from_prefix}poll_options AS po ON (po.topic_id = t.topic_id);
 		</query>
