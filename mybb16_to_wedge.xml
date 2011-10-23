@@ -30,9 +30,9 @@
 				postnum AS posts, SUBSTRING(usertitle, 1, 255) AS usertitle,
 				lastvisit AS last_login, IF(usergroup = 4, 1, 0) AS id_group,
 				regdate AS date_registered, SUBSTRING(website, 1, 255) AS website_url,
-				SUBSTRING(website, 1, 255) AS website_title,
+				SUBSTRING(website, 1, 255) AS website_title, '' AS message_labels,
 				SUBSTRING(signature, 1, 65534) AS signature, hideemail AS hide_email,
-				SUBSTRING(buddylist, 1, 255) AS buddy_list,
+				SUBSTRING(buddylist, 1, 255) AS buddy_list, '' AS openid_uri, '' AS ignore_boards,
 				SUBSTRING(regip, 1, 255) AS member_ip, SUBSTRING(regip, 1, 255) AS member_ip2,
 				SUBSTRING(ignorelist, 1, 255) AS pm_ignore_list,
 				timeonline AS total_time_logged_in,	birthday AS birthdate
@@ -139,7 +139,7 @@
 			WHERE t.tid = p.tid;
 		</query>
 	</step>
-		<step>
+	<step>
 		<title>Importing polls</title>
 		<detect>{$from_prefix}polls</detect>
 		<destination>{$to_prefix}polls</destination>
