@@ -113,7 +113,7 @@
 				SUBSTRING(u.user_from, 1, 255) AS location,
 				u.user_posts AS posts, IF(u.user_rank = 1, 1, IFNULL(mg.id_group, 0)) AS id_group,
 				u.user_new_privmsg AS instant_messages, '' AS message_labels,
-				SUBSTRING(u.user_email, 1, 255) AS email_address, '' AS openid_uri,
+				SUBSTRING(u.user_email, 1, 255) AS email_address,
 				u.user_unread_privmsg AS unread_messages, '' AS ignore_boards,
 				SUBSTRING(u.user_website, 1, 255) AS website_title,
 				SUBSTRING(u.user_website, 1, 255) AS website_url,

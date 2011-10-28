@@ -14,25 +14,25 @@
 // Buy some time
 @set_time_limit(600);
 
-//Try to set our error- and exception handlers.
+// Try to set our error- and exception handlers.
 @set_exception_handler(array('import_exception', 'exception_handler'));
 @set_error_handler(array('import_exception', 'error_handler_callback'), E_ALL);
 
-//Load the language file and create an importer cookie.
+// Load the language file and create an importer cookie.
 lng::loadLang();
 
 $cookie = new Cookie();
 $import = new Importer();
 $template = new template();
 
-//XML ajax feedback? We can just skip everything else
+// XML ajax feedback? We can just skip everything else
 if (isset($_GET['xml']))
 {
 	$template->xml();
 	die();
 }
 
-//UI and worker process comes next..
+// UI and worker process comes next..
 $template->header();
 
 if (method_exists($import, 'doStep' . $_GET['step']))
@@ -102,7 +102,7 @@ class Importer
 			@unlink(dirname(__FILE__) . '/error_log');
 
 		// The current step - starts at 0.
-		$_GET['step'] =  isset($_GET['step']) ? (int) @$_GET['step'] : 0;
+		$_GET['step'] = isset($_GET['step']) ? (int) @$_GET['step'] : 0;
 		$_REQUEST['start'] = isset($_REQUEST['start']) ? (int) @$_REQUEST['start'] : 0;
 
 		// Check for the password...
@@ -692,7 +692,7 @@ class Importer
 
 				else
 				{
-					// Are we doing attachments?  They're going to want a few things...
+					// Are we doing attachments? They're going to want a few things...
 					if ($special_table == $this->to_prefix . 'attachments')
 					{
 						if (!isset($id_attach, $attachmentUploadDir))
@@ -772,7 +772,7 @@ class Importer
 											FROM {$to_prefix}log_ips
 											WHERE member_ip = '" . $ipv6ip . "'
 											LIMIT 1");
-										//ip already  known?
+										// IP already known?
 										if ($db->num_rows($request2) != 0)
 										{
 											list ($id_ip) = $db->fetch_row($request2);
@@ -1626,7 +1626,7 @@ abstract class helper
 		closedir($dir);
 	}
 
-	//Get the id_member associated with the specified message.
+	// Get the id_member associated with the specified message.
 	public static function getMsgMemberID($messageID)
 	{
 		global $to_prefix, $db;
@@ -1925,7 +1925,7 @@ class Charset
 			$c1 = $text{$i};
 			if ($c1 >= "\xc0")
 			{
-				//Should be converted to UTF8, if it's not UTF8 already
+				// Should be converted to UTF8, if it's not UTF8 already
 				$c2 = $i+1 >= $max? "\x00" : $text{$i+1};
 				$c3 = $i+2 >= $max? "\x00" : $text{$i+2};
 				$c4 = $i+3 >= $max? "\x00" : $text{$i+3};
@@ -2047,7 +2047,7 @@ class lng
 					return true;
 				}
 				else
-					throw new Exception('Unable to set language string for  <em>' . $key . '</em>. It was already set.');
+					throw new Exception('Unable to set language string for <em>' . $key . '</em>. It was already set.');
 		}
 		catch(Exception $e)
 		{
@@ -2530,7 +2530,7 @@ class template
 							<div id="validate_path_from" class="validate">', $test_from ? lng::get('we.imp.right_path') : lng::get('we.imp.change_path'), '</div>
 						</dd>';
 
-		//Any custom form elements?
+		// Any custom form elements?
 		if ($object->xml->general->form)
 		{
 			foreach ($object->xml->general->form->children() as $field)

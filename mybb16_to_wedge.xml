@@ -32,7 +32,7 @@
 				regdate AS date_registered, SUBSTRING(website, 1, 255) AS website_url,
 				SUBSTRING(website, 1, 255) AS website_title, '' AS message_labels,
 				SUBSTRING(signature, 1, 65534) AS signature, hideemail AS hide_email,
-				SUBSTRING(buddylist, 1, 255) AS buddy_list, '' AS openid_uri, '' AS ignore_boards,
+				SUBSTRING(buddylist, 1, 255) AS buddy_list, '' AS ignore_boards,
 				SUBSTRING(regip, 1, 255) AS member_ip, SUBSTRING(regip, 1, 255) AS member_ip2,
 				SUBSTRING(ignorelist, 1, 255) AS pm_ignore_list,
 				timeonline AS total_time_logged_in,	birthday AS birthdate

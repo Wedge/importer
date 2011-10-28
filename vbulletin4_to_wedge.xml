@@ -72,7 +72,7 @@
 					ELSE 0
 				END AS id_group,
 				CASE WHEN u.usergroupid IN (3, 4) THEN 0 ELSE 1 END AS is_activated,
-				SUBSTRING(u.salt, 1, 5) AS password_salt, '' AS openid_uri,
+				SUBSTRING(u.salt, 1, 5) AS password_salt,
 				SUBSTRING(ut.signature, 1, 65534) AS signature, '' AS lngfile,
 				'' AS buddy_list, '' AS pm_ignore_list, '' AS message_labels,
 				'' AS personal_text, '' AS time_format, '' AS avatar, '' AS secret_question,

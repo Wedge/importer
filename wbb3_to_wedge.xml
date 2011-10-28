@@ -148,7 +148,7 @@
 				IF (p.Posts IS NULL, 0, p.Posts) AS posts, u.registrationDate AS date_registered,
 				u.lastActivityTime AS last_login,SUBSTRING(u.username, 1, 255) AS real_name,
 				u.password AS passwd, SUBSTRING(u.email, 1, 64) AS email_address, '' AS message_labels,
-				1 AS show_online, 0 AS id_group, 1 AS hide_email, '' AS openid_uri, '' AS ignore_boards,
+				1 AS show_online, 0 AS id_group, 1 AS hide_email, '' AS ignore_boards,
 				SUBSTRING(u.signature, 1, 65534) AS signature, salt AS password_salt
 			FROM {$from_prefix}wcf1_user AS u
 				LEFT JOIN {$from_prefix}{$wbb_prefix}user AS p ON (u.userID = p.UserID);
