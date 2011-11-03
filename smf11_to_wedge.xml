@@ -131,7 +131,6 @@
 				'cal_days_for_index',
 				'requireAgreement',
 				'unapprovedMembers',
-				'default_personal_text',
 				'package_make_backups',
 				'databaseSession_enable',
 				'databaseSession_loose',
@@ -205,24 +204,24 @@
 		<destination>{$to_prefix}members</destination>
 		<presql>TRUNCATE {$to_prefix}members;</presql>
 		<query>
-				SELECT
-					ID_MEMBER as id_member, memberName AS member_name, dateRegistered AS date_registered, 
-					posts, ID_GROUP as id_group, lngfile, lastLogin AS last_login,
-					realName AS real_name, instantMessages AS instant_messages,
-					unreadMessages AS unread_messages, buddy_list, pm_ignore_list,
-					messageLabels AS message_labels, passwd, emailAddress AS email_address,
-					personalText AS personal_text, gender, birthdate, websiteUrl AS website_url,
-					websiteTitle AS website_title, location, hideEmail AS hide_email,
-					showOnline AS show_online, timeFormat AS time_format, signature,
-					timeOffset AS time_offset, avatar, pm_email_notify, usertitle, '' AS ignore_boards,
-					notifyAnnouncements AS notify_announcements, notifyOnce AS notify_regularity,
-					notifySendBody AS notify_send_body,	notifyTypes AS notify_types,
-					memberIP AS member_ip, memberIP2 AS member_ip2,	secretQuestion AS secret_question,
-					secretAnswer AS secret_answer, ID_THEME AS id_theme, is_activated,
-					validation_code, ID_MSG_LAST_VISIT AS id_msg_last_visit, additionalGroups AS additional_groups,
-					smileySet AS smiley_set, ID_POST_GROUP AS id_post_group,
-					totalTimeLoggedIn AS total_time_logged_in, passwordSalt AS password_salt
-				FROM {$from_prefix}members;
+			SELECT
+				ID_MEMBER as id_member, memberName AS member_name, dateRegistered AS date_registered, 
+				posts, ID_GROUP as id_group, lngfile, lastLogin AS last_login,
+				realName AS real_name, instantMessages AS instant_messages,
+				unreadMessages AS unread_messages, buddy_list, pm_ignore_list,
+				messageLabels AS message_labels, passwd, emailAddress AS email_address,
+				personalText AS personal_text, gender, birthdate, websiteUrl AS website_url,
+				websiteTitle AS website_title, location, hideEmail AS hide_email,
+				showOnline AS show_online, timeFormat AS time_format, signature,
+				timeOffset AS time_offset, avatar, pm_email_notify, usertitle, '' AS ignore_boards,
+				notifyAnnouncements AS notify_announcements, notifyOnce AS notify_regularity,
+				notifySendBody AS notify_send_body,	notifyTypes AS notify_types,
+				memberIP AS member_ip, memberIP2 AS member_ip2,	secretQuestion AS secret_question,
+				secretAnswer AS secret_answer, ID_THEME AS id_theme, is_activated,
+				validation_code, ID_MSG_LAST_VISIT AS id_msg_last_visit, additionalGroups AS additional_groups,
+				smileySet AS smiley_set, ID_POST_GROUP AS id_post_group,
+				totalTimeLoggedIn AS total_time_logged_in, passwordSalt AS password_salt
+			FROM {$from_prefix}members;
 		</query>
 	</step>
 	<step>
@@ -231,9 +230,9 @@
 		<destination>{$to_prefix}categories</destination>
 		<presql>TRUNCATE {$to_prefix}categories;</presql>
 		<query>
-				SELECT
-					ID_CAT AS id_cat, name, catOrder AS cat_order, canCollapse AS can_collapse
-				FROM {$from_prefix}categories;
+			SELECT
+				ID_CAT AS id_cat, name, catOrder AS cat_order, canCollapse AS can_collapse
+			FROM {$from_prefix}categories;
 		</query>
 	</step>
 	<step>
@@ -242,9 +241,9 @@
 		<destination>{$to_prefix}collapsed_categories</destination>
 		<presql>TRUNCATE {$to_prefix}collapsed_categories;</presql>
 		<query>
-				SELECT
-					ID_CAT AS id_cat, ID_MEMBER AS id_member
-				FROM {$from_prefix}collapsed_categories;
+			SELECT
+				ID_CAT AS id_cat, ID_MEMBER AS id_member
+			FROM {$from_prefix}collapsed_categories;
 		</query>
 	</step>
 	<step>
@@ -268,13 +267,13 @@
 			}
 		</preparsecode>
 		<query>
-				SELECT
-					ID_BOARD AS id_board, ID_CAT AS id_cat, childLevel AS child_level,
-					ID_PARENT AS id_parent, boardOrder AS board_order, ID_LAST_MSG AS id_last_msg,
-					ID_MSG_UPDATED AS id_msg_updated, memberGroups AS member_groups,
-					name, description, numTopics AS num_topics, numPosts AS num_posts,
-					countPosts AS count_posts,ID_THEME AS id_theme,	override_theme, ID_BOARD AS url
-				FROM {$from_prefix}boards;
+			SELECT
+				ID_BOARD AS id_board, ID_CAT AS id_cat, childLevel AS child_level,
+				ID_PARENT AS id_parent, boardOrder AS board_order, ID_LAST_MSG AS id_last_msg,
+				ID_MSG_UPDATED AS id_msg_updated, memberGroups AS member_groups,
+				name, description, numTopics AS num_topics, numPosts AS num_posts,
+				countPosts AS count_posts,ID_THEME AS id_theme,	override_theme, ID_BOARD AS url
+			FROM {$from_prefix}boards;
 		</query>
 	</step>
 	<step>
@@ -283,12 +282,12 @@
 		<destination>{$to_prefix}topics</destination>
 		<presql>TRUNCATE {$to_prefix}topics;</presql>
 		<query>
-				SELECT
-					ID_TOPIC AS id_topic, isSticky AS is_sticky, ID_BOARD AS id_board,
-					ID_FIRST_MSG AS id_first_msg,ID_LAST_MSG AS id_last_msg,
-					ID_MEMBER_STARTED AS id_member_started, ID_MEMBER_UPDATED AS id_member_updated,
-					ID_POLL AS id_poll, numReplies AS num_replies, numViews AS num_views,locked
-				FROM {$from_prefix}topics;
+			SELECT
+				ID_TOPIC AS id_topic, isSticky AS is_sticky, ID_BOARD AS id_board,
+				ID_FIRST_MSG AS id_first_msg,ID_LAST_MSG AS id_last_msg,
+				ID_MEMBER_STARTED AS id_member_started, ID_MEMBER_UPDATED AS id_member_updated,
+				ID_POLL AS id_poll, numReplies AS num_replies, numViews AS num_views,locked
+			FROM {$from_prefix}topics;
 		</query>
 	</step>
 	<step>
@@ -300,14 +299,14 @@
 			<limit>100</limit>
 		</options>
 		<query>
-				SELECT
-					ID_MSG AS id_msg, ID_TOPIC AS id_topic, ID_BOARD AS id_board,
-					posterTime AS poster_time, ID_MEMBER AS id_member,
-					ID_MSG_MODIFIED AS id_msg_modified, subject, posterName AS poster_name,
-					posterEmail AS poster_email, posterIP AS poster_ip, 
-					smileysEnabled AS smileys_enabled, modifiedTime AS modified_time,
-					modifiedName AS modified_name, body, icon
-				FROM {$from_prefix}messages;
+			SELECT
+				ID_MSG AS id_msg, ID_TOPIC AS id_topic, ID_BOARD AS id_board,
+				posterTime AS poster_time, ID_MEMBER AS id_member,
+				ID_MSG_MODIFIED AS id_msg_modified, subject, posterName AS poster_name,
+				posterEmail AS poster_email, posterIP AS poster_ip, 
+				smileysEnabled AS smileys_enabled, modifiedTime AS modified_time,
+				modifiedName AS modified_name, body, icon
+			FROM {$from_prefix}messages;
 		</query>
 	</step>
 	<step>
@@ -316,12 +315,12 @@
 		<destination>{$to_prefix}polls</destination>
 		<presql>TRUNCATE {$to_prefix}polls;</presql>
 		<query>
-				SELECT
-					ID_POLL AS id_poll, question, votingLocked AS voting_locked,
-					maxVotes AS max_votes, expireTime AS expire_time,
-					hideResults AS hide_results, changeVote AS change_vote,
-					ID_MEMBER AS id_member, posterName AS poster_name
-				FROM {$from_prefix}polls;
+			SELECT
+				ID_POLL AS id_poll, question, votingLocked AS voting_locked,
+				maxVotes AS max_votes, expireTime AS expire_time,
+				hideResults AS hide_results, changeVote AS change_vote,
+				ID_MEMBER AS id_member, posterName AS poster_name
+			FROM {$from_prefix}polls;
 		</query>
 	</step>
 	<step>
@@ -330,9 +329,9 @@
 		<destination>{$to_prefix}poll_choices</destination>
 		<presql>TRUNCATE {$to_prefix}poll_choices;</presql>
 		<query>
-				SELECT
-					ID_POLL AS id_poll, ID_CHOICE AS id_choice, label, votes
-				FROM {$from_prefix}poll_choices;
+			SELECT
+				ID_POLL AS id_poll, ID_CHOICE AS id_choice, label, votes
+			FROM {$from_prefix}poll_choices;
 		</query>
 	</step>
 	<step>
@@ -341,9 +340,9 @@
 		<destination>{$to_prefix}log_polls</destination>
 		<presql>TRUNCATE {$to_prefix}log_polls;</presql>
 		<query>
-				SELECT
-					ID_POLL AS id_poll, ID_MEMBER AS id_member, ID_CHOICE AS id_choice
-				FROM {$from_prefix}log_polls;
+			SELECT
+				ID_POLL AS id_poll, ID_MEMBER AS id_member, ID_CHOICE AS id_choice
+			FROM {$from_prefix}log_polls;
 		</query>
 	</step>
 	<step>
@@ -355,11 +354,11 @@
 			<limit>200</limit>
 		</options>
 		<query>
-				SELECT
-					ID_PM AS id_pm, ID_MEMBER_FROM AS id_member_from, 
-					deletedBySender AS deleted_by_sender, fromName AS from_name,
-					msgtime, subject, body
-				FROM {$from_prefix}personal_messages;
+			SELECT
+				ID_PM AS id_pm, ID_MEMBER_FROM AS id_member_from, 
+				deletedBySender AS deleted_by_sender, fromName AS from_name,
+				msgtime, subject, body
+			FROM {$from_prefix}personal_messages;
 		</query>
 	</step>
 	<step>
@@ -368,9 +367,9 @@
 		<destination>{$to_prefix}pm_recipients</destination>
 		<presql>TRUNCATE {$to_prefix}pm_recipients;</presql>
 		<query>
-				SELECT
-					ID_PM AS id_pm, ID_MEMBER AS id_member, labels, bcc, is_read, deleted
-				FROM {$from_prefix}pm_recipients;
+			SELECT
+				ID_PM AS id_pm, ID_MEMBER AS id_member, labels, bcc, is_read, deleted
+			FROM {$from_prefix}pm_recipients;
 		</query>
 	</step>
 	<step>
@@ -379,9 +378,9 @@
 		<destination>{$to_prefix}moderators</destination>
 		<presql>TRUNCATE {$to_prefix}moderators;</presql>
 		<query>
-				SELECT
-					ID_BOARD AS id_board, ID_MEMBER AS id_member
-				FROM {$from_prefix}moderators;
+			SELECT
+				ID_BOARD AS id_board, ID_MEMBER AS id_member
+			FROM {$from_prefix}moderators;
 		</query>
 	</step>
 	<step>
@@ -390,9 +389,9 @@
 		<destination>{$to_prefix}log_boards</destination>
 		<presql>TRUNCATE {$to_prefix}log_boards;</presql>
 		<query>
-				SELECT
-					ID_MEMBER AS id_member, ID_BOARD AS id_board, ID_MSG AS id_msg
-				FROM {$from_prefix}log_boards;
+			SELECT
+				ID_MEMBER AS id_member, ID_BOARD AS id_board, ID_MSG AS id_msg
+			FROM {$from_prefix}log_boards;
 		</query>
 	</step>
 	<step>
@@ -401,9 +400,9 @@
 		<destination>{$to_prefix}log_topics</destination>
 		<presql>TRUNCATE {$to_prefix}log_topics;</presql>
 		<query>
-				SELECT
-					ID_MEMBER AS id_member, ID_TOPIC AS id_topic, ID_MSG AS id_msg
-				FROM {$from_prefix}log_topics;
+			SELECT
+				ID_MEMBER AS id_member, ID_TOPIC AS id_topic, ID_MSG AS id_msg
+			FROM {$from_prefix}log_topics;
 		</query>
 	</step>
 	<step>
@@ -412,9 +411,9 @@
 		<destination>{$to_prefix}log_mark_read</destination>
 		<presql>TRUNCATE {$to_prefix}log_mark_read;</presql>
 		<query>
-				SELECT
-					ID_MEMBER AS id_member, ID_BOARD AS id_board, ID_MSG AS id_msg
-				FROM {$from_prefix}log_mark_read;
+			SELECT
+				ID_MEMBER AS id_member, ID_BOARD AS id_board, ID_MSG AS id_msg
+			FROM {$from_prefix}log_mark_read;
 		</query>
 	</step>
 	<step>
@@ -423,9 +422,9 @@
 		<destination>{$to_prefix}log_notify</destination>
 		<presql>TRUNCATE {$to_prefix}log_notify;</presql>
 		<query>
-				SELECT
-					ID_MEMBER AS id_member, ID_TOPIC AS id_topic, ID_BOARD AS id_board, sent
-				FROM {$from_prefix}log_notify;
+			SELECT
+				ID_MEMBER AS id_member, ID_TOPIC AS id_topic, ID_BOARD AS id_board, sent
+			FROM {$from_prefix}log_notify;
 		</query>
 	</step>
 	<step>
@@ -434,11 +433,11 @@
 		<destination>{$to_prefix}calendar</destination>
 		<presql>TRUNCATE {$to_prefix}calendar;</presql>
 		<query>
-				SELECT
-					ID_EVENT AS id_event, startDate AS start_date,
-					endDate AS end_date, ID_BOARD AS id_board,
-					ID_TOPIC AS id_topic, title, ID_MEMBER AS id_member
-				FROM {$from_prefix}calendar;
+			SELECT
+				ID_EVENT AS id_event, startDate AS start_date,
+				endDate AS end_date, ID_BOARD AS id_board,
+				ID_TOPIC AS id_topic, title, ID_MEMBER AS id_member
+			FROM {$from_prefix}calendar;
 		</query>
 	</step>
 	<step>
@@ -449,11 +448,11 @@
 			<replace>true</replace>
 		</options>
 		<query>
-				SELECT
-					ID_GROUP AS id_group, groupName AS group_name, '' AS description, 
-					onlineColor AS online_color, minPosts AS min_posts,
-					maxMessages AS max_messages, stars
-				FROM {$from_prefix}membergroups;
+			SELECT
+				ID_GROUP AS id_group, groupName AS group_name, '' AS description, 
+				onlineColor AS online_color, minPosts AS min_posts,
+				maxMessages AS max_messages, stars
+			FROM {$from_prefix}membergroups;
 		</query>
 	</step>
 	<step>
@@ -464,9 +463,9 @@
 			<replace>true</replace>
 		</options>
 		<query>
-				SELECT
-					ID_GROUP AS id_group, permission, addDeny AS add_deny
-				FROM {$from_prefix}permissions;
+			SELECT
+				ID_GROUP AS id_group, permission, addDeny AS add_deny
+			FROM {$from_prefix}permissions;
 		</query>
 	</step>
 	<step>
@@ -477,10 +476,10 @@
 			<replace>true</replace>
 		</options>
 		<query>
-				SELECT
-					ID_SMILEY AS id_smiley, code, filename, description,
-					smileyRow AS smiley_row, smileyOrder AS smiley_order, hidden
-				FROM {$from_prefix}smileys;
+			SELECT
+				ID_SMILEY AS id_smiley, code, filename, description,
+				smileyRow AS smiley_row, smileyOrder AS smiley_order, hidden
+			FROM {$from_prefix}smileys;
 		</query>
 	</step>
 	<step>
@@ -489,9 +488,9 @@
 		<destination>{$to_prefix}log_activity</destination>
 		<presql>TRUNCATE {$to_prefix}log_activity;</presql>
 		<query>
-				SELECT
-					date, hits, topics, posts, registers, mostOn AS most_on
-				FROM {$from_prefix}log_activity;
+			SELECT
+				date, hits, topics, posts, registers, mostOn AS most_on
+			FROM {$from_prefix}log_activity;
 		</query>
 	</step>
 	<step>
@@ -500,10 +499,10 @@
 		<destination>{$to_prefix}log_actions</destination>
 		<presql>TRUNCATE {$to_prefix}log_actions;</presql>
 		<query>
-				SELECT
-					ID_ACTION AS id_action, logTime AS log_time, 
-					ID_MEMBER AS id_member, ip, action, extra
-				FROM {$from_prefix}log_actions;
+			SELECT
+				ID_ACTION AS id_action, logTime AS log_time, 
+				ID_MEMBER AS id_member, ip, action, extra
+			FROM {$from_prefix}log_actions;
 		</query>
 	</step>
 </importer>

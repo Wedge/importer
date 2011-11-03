@@ -318,5 +318,4 @@
 			GROUP BY pm.msg_id;
 		</query>
 	</step>
-
 </importer>

@@ -131,7 +131,6 @@
 				'cal_days_for_index',
 				'requireAgreement',
 				'unapprovedMembers',
-				'default_personal_text',
 				'package_make_backups',
 				'databaseSession_enable',
 				'databaseSession_loose',
@@ -205,18 +204,18 @@
 		<destination>{$to_prefix}members</destination>
 		<presql>TRUNCATE {$to_prefix}members;</presql>
 		<query>
-				SELECT
-					id_member, member_name, date_registered, posts, id_group, lngfile, last_login,
-					real_name, instant_messages, unread_messages, new_pm, buddy_list, pm_ignore_list,
-					pm_prefs, mod_prefs, message_labels, passwd, email_address, personal_text,
-					gender, birthdate, website_url, website_title, location, hide_email, show_online,
-					time_format, signature, time_offset, avatar, pm_email_notify,
-					usertitle, notify_announcements, notify_regularity, notify_send_body,
-					notify_types, member_ip, member_ip2, secret_question, secret_answer, id_theme, is_activated,
-					validation_code, id_msg_last_visit, additional_groups, smiley_set, id_post_group,
-					total_time_logged_in, password_salt, ignore_boards, warning, passwd_flood,
-					pm_receive_from
-				FROM {$from_prefix}members;
+			SELECT
+				id_member, member_name, date_registered, posts, id_group, lngfile, last_login,
+				real_name, instant_messages, unread_messages, new_pm, buddy_list, pm_ignore_list,
+				pm_prefs, mod_prefs, message_labels, passwd, email_address, personal_text,
+				gender, birthdate, website_url, website_title, location, hide_email, show_online,
+				time_format, signature, time_offset, avatar, pm_email_notify,
+				usertitle, notify_announcements, notify_regularity, notify_send_body,
+				notify_types, member_ip, member_ip2, secret_question, secret_answer, id_theme, is_activated,
+				validation_code, id_msg_last_visit, additional_groups, smiley_set, id_post_group,
+				total_time_logged_in, password_salt, ignore_boards, warning, passwd_flood,
+				pm_receive_from
+			FROM {$from_prefix}members;
 		</query>
 	</step>
 	<step>
@@ -225,9 +224,9 @@
 		<destination>{$to_prefix}categories</destination>
 		<presql>TRUNCATE {$to_prefix}categories;</presql>
 		<query>
-				SELECT
-					id_cat, name, cat_order, can_collapse
-				FROM {$from_prefix}categories;
+			SELECT
+				id_cat, name, cat_order, can_collapse
+			FROM {$from_prefix}categories;
 		</query>
 	</step>
 	<step>
@@ -236,9 +235,9 @@
 		<destination>{$to_prefix}collapsed_categories</destination>
 		<presql>TRUNCATE {$to_prefix}collapsed_categories;</presql>
 		<query>
-				SELECT
-					id_cat, id_member
-				FROM {$from_prefix}collapsed_categories;
+			SELECT
+				id_cat, id_member
+			FROM {$from_prefix}collapsed_categories;
 		</query>
 	</step>
 	<step>
@@ -262,11 +261,11 @@
 			}
 		</preparsecode>
 		<query>
-				SELECT
-					id_board,id_cat,child_level,id_parent,board_order,id_last_msg,id_msg_updated,member_groups,
-					id_profile,name,description,num_topics,num_posts,count_posts,id_theme,
-					override_theme,unapproved_posts,unapproved_topics,redirect, id_board AS url
-				FROM {$from_prefix}boards;
+			SELECT
+				id_board,id_cat,child_level,id_parent,board_order,id_last_msg,id_msg_updated,member_groups,
+				id_profile,name,description,num_topics,num_posts,count_posts,id_theme,
+				override_theme,unapproved_posts,unapproved_topics,redirect, id_board AS url
+			FROM {$from_prefix}boards;
 		</query>
 	</step>
 	<step>
@@ -275,11 +274,11 @@
 		<destination>{$to_prefix}topics</destination>
 		<presql>TRUNCATE {$to_prefix}topics;</presql>
 		<query>
-				SELECT
-					id_topic,is_sticky,id_board,id_first_msg,id_last_msg,id_member_started,
-					id_member_updated,id_poll,id_previous_board,id_previous_topic,num_replies,
-					num_views,locked,unapproved_posts,approved
-				FROM {$from_prefix}topics;
+			SELECT
+				id_topic,is_sticky,id_board,id_first_msg,id_last_msg,id_member_started,
+				id_member_updated,id_poll,id_previous_board,id_previous_topic,num_replies,
+				num_views,locked,unapproved_posts,approved
+			FROM {$from_prefix}topics;
 		</query>
 	</step>
 	<step>
@@ -291,10 +290,10 @@
 			<limit>100</limit>
 		</options>
 		<query>
-				SELECT
-					id_msg, id_topic, id_board, poster_time, id_member, id_msg_modified, subject, poster_name,
-					poster_email, poster_ip, smileys_enabled, modified_time, modified_name, body, icon, approved
-				FROM {$from_prefix}messages;
+			SELECT
+				id_msg, id_topic, id_board, poster_time, id_member, id_msg_modified, subject, poster_name,
+				poster_email, poster_ip, smileys_enabled, modified_time, modified_name, body, icon, approved
+			FROM {$from_prefix}messages;
 		</query>
 	</step>
 	<step>
@@ -303,10 +302,10 @@
 		<destination>{$to_prefix}polls</destination>
 		<presql>TRUNCATE {$to_prefix}polls;</presql>
 		<query>
-				SELECT
-					id_poll, question, voting_locked, max_votes, expire_time, hide_results, change_vote,
-					guest_vote, num_guest_voters, reset_poll, id_member, poster_name
-				FROM {$from_prefix}polls;
+			SELECT
+				id_poll, question, voting_locked, max_votes, expire_time, hide_results, change_vote,
+				guest_vote, num_guest_voters, reset_poll, id_member, poster_name
+			FROM {$from_prefix}polls;
 		</query>
 	</step>
 	<step>
@@ -315,9 +314,9 @@
 		<destination>{$to_prefix}poll_choices</destination>
 		<presql>TRUNCATE {$to_prefix}poll_choices;</presql>
 		<query>
-				SELECT
-					id_poll, id_choice, label, votes
-				FROM {$from_prefix}poll_choices;
+			SELECT
+				id_poll, id_choice, label, votes
+			FROM {$from_prefix}poll_choices;
 		</query>
 	</step>
 	<step>
@@ -326,9 +325,9 @@
 		<destination>{$to_prefix}log_polls</destination>
 		<presql>TRUNCATE {$to_prefix}log_polls;</presql>
 		<query>
-				SELECT
-					id_poll, id_member, id_choice
-				FROM {$from_prefix}log_polls;
+			SELECT
+				id_poll, id_member, id_choice
+			FROM {$from_prefix}log_polls;
 		</query>
 	</step>
 	<step>
@@ -340,10 +339,10 @@
 			<limit>200</limit>
 		</options>
 		<query>
-				SELECT
-					id_pm, id_pm_head, id_member_from, deleted_by_sender, from_name,
-					msgtime, subject, body
-				FROM {$from_prefix}personal_messages;
+			SELECT
+				id_pm, id_pm_head, id_member_from, deleted_by_sender, from_name,
+				msgtime, subject, body
+			FROM {$from_prefix}personal_messages;
 		</query>
 	</step>
 	<step>
@@ -352,9 +351,9 @@
 		<destination>{$to_prefix}pm_recipients</destination>
 		<presql>TRUNCATE {$to_prefix}pm_recipients;</presql>
 		<query>
-				SELECT
-					id_pm, id_member, labels, bcc, is_read, is_new, deleted
-				FROM {$from_prefix}pm_recipients;
+			SELECT
+				id_pm, id_member, labels, bcc, is_read, is_new, deleted
+			FROM {$from_prefix}pm_recipients;
 		</query>
 	</step>
 	<step>
@@ -363,9 +362,9 @@
 		<destination>{$to_prefix}pm_rules</destination>
 		<presql>TRUNCATE {$to_prefix}pm_rules;</presql>
 		<query>
-				SELECT
-					id_rule, id_member, rule_name, criteria, actions, delete_pm, is_or
-				FROM {$from_prefix}pm_rules;
+			SELECT
+				id_rule, id_member, rule_name, criteria, actions, delete_pm, is_or
+			FROM {$from_prefix}pm_rules;
 		</query>
 	</step>
 	<step>
@@ -374,9 +373,9 @@
 		<destination>{$to_prefix}moderators</destination>
 		<presql>TRUNCATE {$to_prefix}moderators;</presql>
 		<query>
-				SELECT
-					id_board, id_member
-				FROM {$from_prefix}moderators;
+			SELECT
+				id_board, id_member
+			FROM {$from_prefix}moderators;
 		</query>
 	</step>
 	<step>
@@ -385,9 +384,9 @@
 		<destination>{$to_prefix}log_boards</destination>
 		<presql>TRUNCATE {$to_prefix}log_boards;</presql>
 		<query>
-				SELECT
-					id_member, id_board, id_msg
-				FROM {$from_prefix}log_boards;
+			SELECT
+				id_member, id_board, id_msg
+			FROM {$from_prefix}log_boards;
 		</query>
 	</step>
 	<step>
@@ -396,9 +395,9 @@
 		<destination>{$to_prefix}log_topics</destination>
 		<presql>TRUNCATE {$to_prefix}log_topics;</presql>
 		<query>
-				SELECT
-					id_member, id_topic, id_msg
-				FROM {$from_prefix}log_topics;
+			SELECT
+				id_member, id_topic, id_msg
+			FROM {$from_prefix}log_topics;
 		</query>
 	</step>
 	<step>
@@ -407,9 +406,9 @@
 		<destination>{$to_prefix}log_mark_read</destination>
 		<presql>TRUNCATE {$to_prefix}log_mark_read;</presql>
 		<query>
-				SELECT
-					id_member, id_board, id_msg
-				FROM {$from_prefix}log_mark_read;
+			SELECT
+				id_member, id_board, id_msg
+			FROM {$from_prefix}log_mark_read;
 		</query>
 	</step>
 	<step>
@@ -418,9 +417,9 @@
 		<destination>{$to_prefix}log_notify</destination>
 		<presql>TRUNCATE {$to_prefix}log_notify;</presql>
 		<query>
-				SELECT
-					id_member, id_topic, id_board, sent
-				FROM {$from_prefix}log_notify;
+			SELECT
+				id_member, id_topic, id_board, sent
+			FROM {$from_prefix}log_notify;
 		</query>
 	</step>
 	<step>
@@ -429,9 +428,9 @@
 		<destination>{$to_prefix}calendar</destination>
 		<presql>TRUNCATE {$to_prefix}calendar;</presql>
 		<query>
-				SELECT
-					id_event, start_date, end_date, id_board, id_topic, title, id_member
-				FROM {$from_prefix}calendar;
+			SELECT
+				id_event, start_date, end_date, id_board, id_topic, title, id_member
+			FROM {$from_prefix}calendar;
 		</query>
 	</step>
 	<step>
@@ -440,9 +439,9 @@
 		<destination>{$to_prefix}calendar_holidays</destination>
 		<presql>TRUNCATE {$to_prefix}calendar_holidays;</presql>
 		<query>
-				SELECT
-					id_holiday, event_date, title
-				FROM {$from_prefix}calendar_holidays;
+			SELECT
+				id_holiday, event_date, title
+			FROM {$from_prefix}calendar_holidays;
 		</query>
 	</step>
 	<step>
@@ -453,10 +452,10 @@
 			<replace>true</replace>
 		</options>
 		<query>
-				SELECT
-					id_group, group_name, description, online_color, min_posts,
-					max_messages, stars, group_type, hidden, id_parent
-				FROM {$from_prefix}membergroups;
+			SELECT
+				id_group, group_name, description, online_color, min_posts,
+				max_messages, stars, group_type, hidden, id_parent
+			FROM {$from_prefix}membergroups;
 		</query>
 	</step>
 	<step>
@@ -467,9 +466,9 @@
 			<replace>true</replace>
 		</options>
 		<query>
-				SELECT
-					id_group, id_member
-				FROM {$from_prefix}group_moderators;
+			SELECT
+				id_group, id_member
+			FROM {$from_prefix}group_moderators;
 		</query>
 	</step>
 	<step>
@@ -480,9 +479,9 @@
 			<replace>true</replace>
 		</options>
 		<query>
-				SELECT
-					id_profile, profile_name
-				FROM {$from_prefix}permission_profiles;
+			SELECT
+				id_profile, profile_name
+			FROM {$from_prefix}permission_profiles;
 		</query>
 	</step>
 	<step>
@@ -493,9 +492,9 @@
 			<replace>true</replace>
 		</options>
 		<query>
-				SELECT
-					id_group, permission, add_deny
-				FROM {$from_prefix}permissions;
+			SELECT
+				id_group, permission, add_deny
+			FROM {$from_prefix}permissions;
 		</query>
 	</step>
 	<step>
@@ -506,9 +505,9 @@
 			<replace>true</replace>
 		</options>
 		<query>
-				SELECT
-					id_group, id_profile, permission, add_deny
-				FROM {$from_prefix}board_permissions;
+			SELECT
+				id_group, id_profile, permission, add_deny
+			FROM {$from_prefix}board_permissions;
 		</query>
 	</step>
 	<step>
@@ -519,10 +518,10 @@
 			<replace>true</replace>
 		</options>
 		<query>
-				SELECT
-					id_smiley, code, filename, description, smiley_row,
-					smiley_order, hidden
-				FROM {$from_prefix}smileys;
+			SELECT
+				id_smiley, code, filename, description, smiley_row,
+				smiley_order, hidden
+			FROM {$from_prefix}smileys;
 		</query>
 	</step>
 	<step>
@@ -531,9 +530,9 @@
 		<destination>{$to_prefix}log_activity</destination>
 		<presql>TRUNCATE {$to_prefix}log_activity;</presql>
 		<query>
-				SELECT
-					date, hits, topics, posts, registers, most_on
-				FROM {$from_prefix}log_activity;
+			SELECT
+				date, hits, topics, posts, registers, most_on
+			FROM {$from_prefix}log_activity;
 		</query>
 	</step>
 	<step>
@@ -542,10 +541,10 @@
 		<destination>{$to_prefix}log_actions</destination>
 		<presql>TRUNCATE {$to_prefix}log_actions;</presql>
 		<query>
-				SELECT
-					id_action, id_log, log_time, id_member, ip, action, id_board,
-					id_topic, id_msg, extra
-				FROM {$from_prefix}log_actions;
+			SELECT
+				id_action, id_log, log_time, id_member, ip, action, id_board,
+				id_topic, id_msg, extra
+			FROM {$from_prefix}log_actions;
 		</query>
 	</step>
 	<step>
@@ -554,10 +553,10 @@
 		<destination>{$to_prefix}log_reported</destination>
 		<presql>TRUNCATE {$to_prefix}log_reported;</presql>
 		<query>
-				SELECT
-					id_report, id_msg, id_topic, id_board, id_member, membername, subject,
-					body, time_started, time_updated, num_reports, closed, ignore_all
-				FROM {$from_prefix}log_reported;
+			SELECT
+				id_report, id_msg, id_topic, id_board, id_member, membername, subject,
+				body, time_started, time_updated, num_reports, closed, ignore_all
+			FROM {$from_prefix}log_reported;
 		</query>
 	</step>
 	<step>
@@ -566,9 +565,9 @@
 		<destination>{$to_prefix}log_reported_comments</destination>
 		<presql>TRUNCATE {$to_prefix}log_reported_comments;</presql>
 		<query>
-				SELECT
-					id_comment, id_report, id_member, membername, comment, time_sent
-				FROM {$from_prefix}log_reported_comments;
+			SELECT
+				id_comment, id_report, id_member, membername, comment, time_sent
+			FROM {$from_prefix}log_reported_comments;
 		</query>
 	</step>
 	<step>
@@ -577,9 +576,9 @@
 		<destination>{$to_prefix}log_spider_hits</destination>
 		<presql>TRUNCATE {$to_prefix}log_spider_hits;</presql>
 		<query>
-				SELECT
-					id_hit, id_spider, log_time, url, processed
-				FROM {$from_prefix}log_spider_hits;
+			SELECT
+				id_hit, id_spider, log_time, url, processed
+			FROM {$from_prefix}log_spider_hits;
 		</query>
 	</step>
 	<step>
@@ -588,9 +587,9 @@
 		<destination>{$to_prefix}log_spider_stats</destination>
 		<presql>TRUNCATE {$to_prefix}log_spider_stats;</presql>
 		<query>
-				SELECT
-					id_spider, page_hits, last_seen, stat_date
-				FROM {$from_prefix}log_spider_stats;
+			SELECT
+				id_spider, page_hits, last_seen, stat_date
+			FROM {$from_prefix}log_spider_stats;
 		</query>
 	</step>
 		<step>
@@ -599,10 +598,10 @@
 		<destination>{$to_prefix}subscriptions</destination>
 		<presql>TRUNCATE {$to_prefix}subscriptions;</presql>
 		<query>
-				SELECT
-					id_subscribe, name, description, cost, length, id_group,
-					add_groups, active, repeatable, allow_partial, reminder, email_complete
-				FROM {$from_prefix}subscriptions;
+			SELECT
+				id_subscribe, name, description, cost, length, id_group,
+				add_groups, active, repeatable, allow_partial, reminder, email_complete
+			FROM {$from_prefix}subscriptions;
 		</query>
 	</step>
 </importer>
