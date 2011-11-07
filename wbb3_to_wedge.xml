@@ -5,8 +5,8 @@
 		<version>Wedge 0.1</version>
 		<settings>/wcf/config.inc.php</settings>
 		<form>
-			<field id="1" type="text" size="20" label="WCF table prefix (default is wcf1_ )">wcf_prefix</field>
-			<field id="2" type="text" size="20" label="WBB table prefix (default is wbb1_1_ )">wbb_prefix</field>
+			<field id="1" type="text" size="20" default="wcf1_" label="WCF table prefix">wcf_prefix</field>
+			<field id="2" type="text" size="20" default="wbb1_1_" label="WBB table prefix">wbb_prefix</field>
 		</form>
 		<from_prefix>`$dbName`.</from_prefix>
 		<table_test>{$from_prefix}{$wbb_prefix}user;</table_test>

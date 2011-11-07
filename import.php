@@ -2310,6 +2310,7 @@ class template
 				background-color: #8B7E7E;
 				padding: 22px 4% 12px 4%;
 				color: #FFF5C2;
+				text-shadow: 0 0 8px #333;
 				font-size: xx-large;
 				border-bottom: 3px solid #FD9604;
 				height: 40px;
@@ -2538,7 +2539,7 @@ class template
 				if ($field->attributes()->{'type'} == 'text')
 					echo '
 						<dt><label for="field', $field->attributes()->{'id'}, '">', $field->attributes()->{'label'}, ':</label></dt>
-						<dd><input type="text" name="field', $field->attributes()->{'id'}, '" id="field', $field->attributes()->{'id'}, '" value="" size="', $field->attributes()->{'size'}, '" /></dd>';
+						<dd><input type="text" name="field', $field->attributes()->{'id'}, '" id="field', $field->attributes()->{'id'}, '" value="', isset($field->attributes()->{'default'}) ? $field->attributes()->{'default'} :'' ,'" size="', $field->attributes()->{'size'}, '" /></dd>';
 
 				elseif ($field->attributes()->{'type'}== 'checked' || $field->attributes()->{'type'} == 'checkbox')
 					echo '
