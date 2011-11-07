@@ -388,7 +388,8 @@ class Importer
 			$steps[$steps_count] = array(
 				'name' => (string) $xml_steps->title,
 				'count' => $steps_count,
-				'mandatory' => $xml_steps->attributes()->{'type'},
+				'mandatory' => (string) $xml_steps->attributes()->{'type'},
+				'checked' => (string) $xml_steps->attributes()->{'checked'} == 'false' ? '' : 'checked="checked"',
 			);
 		}
 		return $steps;
@@ -2568,7 +2569,7 @@ class template
 						<dd>';
 			foreach ($steps as $key => $step)
 				echo '
-							<input type="checkbox" name="do_steps[', $key, ']" id="do_steps[', $key, ']" value="', $step['count'], '"', ($step['mandatory'] ? 'readonly="readonly" ': ' '), ' checked="checked" />', ucfirst(str_replace('importing ', '', $step['name'])), '<br />';
+							<input type="checkbox" name="do_steps[', $key, ']" id="do_steps[', $key, ']" value="', $step['count'], '"', ($step['mandatory'] ? 'readonly="readonly" ': ' '), $step['checked'], '" />', ucfirst(str_replace('importing ', '', $step['name'])), '<br />';
 
 			echo '
 						</dd>';
