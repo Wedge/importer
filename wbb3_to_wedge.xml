@@ -212,7 +212,7 @@
 		</preparsecode>
 		<query>
 			SELECT
-				t.threadID AS id_topic, t.isSticky AS is_sticky, t.boardID AS id_board,
+				t.threadID AS id_topic, t.isSticky AS is_pinned, t.boardID AS id_board,
 				t.replies AS num_replies, t.views AS num_views, t.isClosed AS locked,
 				t.userID AS id_member_started, t.lastPosterID AS id_member_updated,
 				t.firstPostID AS id_first_msg, MAX(p.postid) AS id_last_msg,

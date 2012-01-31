@@ -22,7 +22,7 @@
 				'news',
 				'compactTopicPagesContiguous',
 				'compactTopicPagesEnable',
-				'enableStickyTopics',
+				'enablePinnedTopics',
 				'todayMod',
 				'enablePreviousNext',
 				'pollMode',
@@ -275,7 +275,7 @@
 		<presql>TRUNCATE {$to_prefix}topics;</presql>
 		<query>
 			SELECT
-				id_topic,is_sticky,id_board,id_first_msg,id_last_msg,id_member_started,
+				id_topic,is_sticky AS is_pinned,id_board,id_first_msg,id_last_msg,id_member_started,
 				id_member_updated,id_poll,id_previous_board,id_previous_topic,num_replies,
 				num_views,locked,unapproved_posts,approved
 			FROM {$from_prefix}topics;

@@ -100,7 +100,7 @@
 		</presql>
 		<query>
 			SELECT
-				t.ID AS id_topic, rel.term_taxonomy_id AS id_board, 0 AS is_sticky,
+				t.ID AS id_topic, rel.term_taxonomy_id AS id_board, 0 AS is_pinned,
 				0 AS num_views, t.post_author AS id_member_started,
 				1 AS id_member_updated, t.ID AS id_first_msg, t.ID AS id_last_msg,
 				t.comment_count AS num_replies, IF(t.comment_status = 'locked', 1, 0) AS locked

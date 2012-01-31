@@ -190,7 +190,7 @@
 		</presql>
 		<query>
 			SELECT
-				t.threadid AS id_topic, t.forumid AS id_board, t.sticky AS is_sticky,
+				t.threadid AS id_topic, t.forumid AS id_board, t.sticky AS is_pinned,
 				t.pollid AS id_poll, t.views AS num_views, t.postuserid AS id_member_started,
 				CASE WHEN (ISNULL(ul.userid) OR TRIM(ul.userid) = '') THEN 0 ELSE ul.userid END AS id_member_updated,
 				t.replycount AS num_replies,

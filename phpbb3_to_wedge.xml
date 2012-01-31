@@ -194,7 +194,7 @@
 					WHEN 1 THEN 1 
 					WHEN 2 THEN 1 
 					ELSE 0 
-				END AS is_sticky,
+				END AS is_pinned,
 				t.topic_last_post_id AS id_last_msg, t.topic_poster AS id_member_started,
 				t.topic_last_poster_id AS id_member_updated, IF(po.topic_id > 0, po.topic_id, 0) AS id_poll,
 				t.topic_replies AS num_replies, t.topic_views AS num_views,
