@@ -168,7 +168,6 @@
 				'db_mysql_group_by_fix',
 				'rand_seed',
 				'mostOnlineUpdated',
-				'calendar_updated',
 				'search_pointer',
 				'spider_name_cache',
 				'modlog_enabled',
@@ -420,28 +419,6 @@
 			SELECT
 				id_member, id_topic, id_board, sent
 			FROM {$from_prefix}log_notify;
-		</query>
-	</step>
-	<step>
-		<title>Importing calendar</title>
-		<detect>{$from_prefix}calendar</detect>
-		<destination>{$to_prefix}calendar</destination>
-		<presql>TRUNCATE {$to_prefix}calendar;</presql>
-		<query>
-			SELECT
-				id_event, start_date, end_date, id_board, id_topic, title, id_member
-			FROM {$from_prefix}calendar;
-		</query>
-	</step>
-	<step>
-		<title>Importing calendar holidays</title>
-		<detect>{$from_prefix}calendar_holidays</detect>
-		<destination>{$to_prefix}calendar_holidays</destination>
-		<presql>TRUNCATE {$to_prefix}calendar_holidays;</presql>
-		<query>
-			SELECT
-				id_holiday, event_date, title
-			FROM {$from_prefix}calendar_holidays;
 		</query>
 	</step>
 	<step>

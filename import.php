@@ -1422,10 +1422,10 @@ class Importer
 				'last_message' => 'ADD UNIQUE last_message (id_last_msg, id_board)',
 				'first_message' => 'ADD UNIQUE first_message (id_first_msg, id_board)',
 				'poll' => 'ADD UNIQUE poll (ID_POLL, id_topic)',
-				'is_sticky' => 'ADD KEY is_sticky (isSticky)',
+				'is_pinned' => 'ADD KEY is_pinned (is_pinned)',
 				'id_board' => 'ADD KEY id_board (id_board)',
 				'member_started' => 'ADD KEY member_started (id_member_started, id_board)',
-				'last_message_sticky' => 'ADD KEY last_message_sticky (id_board, is_sticky, id_last_msg)',
+				'last_message_pinned' => 'ADD KEY last_message_pinned (id_board, is_pinned, id_last_msg)',
 				'board_news' => 'ADD KEY board_news (id_board, id_first_msg)',
 			);
 			$db->alter_table('topics', $knownKeys, '', '', true);
