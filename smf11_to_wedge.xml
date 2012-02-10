@@ -53,16 +53,6 @@
 				'max_image_width',
 				'max_image_height',
 				'onlineEnable',
-				'cal_enabled',
-				'cal_maxyear',
-				'cal_minyear',
-				'cal_daysaslink',
-				'cal_defaultboard',
-				'cal_showholidays',
-				'cal_showbdays',
-				'cal_showevents',
-				'cal_showweeknum',
-				'cal_maxspan',
 				'smtp_host',
 				'smtp_port',
 				'smtp_username',
@@ -128,7 +118,6 @@
 				'time_offset',
 				'cookieTime',
 				'lastActive',
-				'cal_days_for_index',
 				'requireAgreement',
 				'unapprovedMembers',
 				'package_make_backups',
@@ -168,7 +157,6 @@
 				'db_mysql_group_by_fix',
 				'rand_seed',
 				'mostOnlineUpdated',
-				'calendar_updated',
 				'search_pointer',
 				'spider_name_cache',
 				'modlog_enabled',
@@ -425,19 +413,6 @@
 			SELECT
 				ID_MEMBER AS id_member, ID_TOPIC AS id_topic, ID_BOARD AS id_board, sent
 			FROM {$from_prefix}log_notify;
-		</query>
-	</step>
-	<step>
-		<title>Importing calendar</title>
-		<detect>{$from_prefix}calendar</detect>
-		<destination>{$to_prefix}calendar</destination>
-		<presql>TRUNCATE {$to_prefix}calendar;</presql>
-		<query>
-			SELECT
-				ID_EVENT AS id_event, startDate AS start_date,
-				endDate AS end_date, ID_BOARD AS id_board,
-				ID_TOPIC AS id_topic, title, ID_MEMBER AS id_member
-			FROM {$from_prefix}calendar;
 		</query>
 	</step>
 	<step>
