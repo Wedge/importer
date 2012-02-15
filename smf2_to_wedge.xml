@@ -202,8 +202,36 @@
 				notify_types, member_ip, member_ip2, secret_question, secret_answer, id_theme, is_activated,
 				validation_code, id_msg_last_visit, additional_groups, smiley_set, id_post_group,
 				total_time_logged_in, password_salt, ignore_boards, warning, passwd_flood,
-				pm_receive_from
+				pm_receive_from, '' AS data
 			FROM {$from_prefix}members;
+		</query>
+	</step>
+	<step>
+		<title><![CDATA[Importing attachments & avatars]]></title>
+		<detect>{$from_prefix}attachments</detect>
+		<destination>{$to_prefix}attachments</destination>
+		<presql>TRUNCATE {$to_prefix}attachments;</presql>
+		<preparsecode>
+			$request = $db->query("
+				SELECT value
+				FROM {$from_prefix}settings
+				WHERE variable='attachmentUploadDir';");
+			list ($smf_attachments_dir) = $db->fetch_row($request);
+
+			if(empty($row['file_hash']))
+			{
+				$row['file_hash'] = helper::createAttachmentFilename($row['filename']);
+				helper::copy_file($smf_attachments_dir . '/' . $row['id_attach'] . '_' . $row['filename'], $attachmentUploadDir . '/' . $row['id_attach'] . '_' . $row['file_hash'] . '.ext');
+				helper::copy_file($smf_attachments_dir . '/' . $row['filename'], $attachmentUploadDir . '/' . $row['id_attach'] . '_' . $row['file_hash'] . '.ext');
+			}
+			else
+				helper::copy_file($smf_attachments_dir . '/' . $row['id_attach'] . '_' . $row['file_hash'], $attachmentUploadDir . '/'. $row['id_attach'] . '_' . $row['file_hash'] . '.ext');
+		</preparsecode>
+		<query>
+			SELECT
+				id_attach, id_thumb, id_msg, id_member, attachment_type, filename, file_hash, size, downloads,
+				width, height, fileext, mime_type, id_folder,'opaque' AS transparency, approved
+			FROM {$from_prefix}attachments;			
 		</query>
 	</step>
 	<step>
@@ -558,7 +586,7 @@
 			FROM {$from_prefix}log_spider_stats;
 		</query>
 	</step>
-		<step>
+	<step>
 		<title>Importing subscriptions</title>
 		<detect>{$from_prefix}subscriptions</detect>
 		<destination>{$to_prefix}subscriptions</destination>

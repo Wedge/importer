@@ -716,6 +716,7 @@ class Importer
 								$id_attach = 1;
 						}
 					}
+
 					while (true)
 					{
 						helper::pastTime($substep);
@@ -1384,7 +1385,7 @@ class Importer
 						$filename = $custom_avatar_dir . '/' . $row['filename'];
 					}
 					else
-						$filename = getLegacyAttachmentFilename($row['filename'], $row['id_attach']);
+						$filename = helper::getLegacyAttachmentFilename($row['filename'], $row['id_attach']);
 
 					// Probably not one of the imported ones, then?
 					if (!file_exists($filename))
@@ -1532,6 +1533,34 @@ abstract class helper
 		$clean_name = preg_replace(array('/\s/', '/[^\w_\.\-]/'), array('_', ''), $clean_name);
 
 		return $attachment_id . '_' . strtr($clean_name, '.', '_') . md5($clean_name);
+	}
+
+	/**
+	* helper function to create an encrypted attachment name
+	*
+	* @param string $filename
+	* @return string
+	*/	
+	public static function createAttachmentFilename($filename)
+	{
+		return sha1(md5($filename . time()) . mt_rand());
+	}
+
+	/**
+	* helper function, simple file copy at all
+	*
+	* @param string $filename
+	* @return bol
+	*/
+	
+	public static function copy_file($source, $destination)
+	{
+		if(is_file($source))
+		{
+			copy($source, $destination);
+			return false;
+		}
+		return true;
 	}
 
 	/**
