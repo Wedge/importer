@@ -170,6 +170,12 @@
 				'disable_hash_time',
 				'latestreal_name',
 				'disableHashTime',
+				'paid_enabled',
+				'paid_email',
+				'paid_email_to',
+				'paid_currency_code',
+				'paid_currency_symbol',
+				'paypal_email',
 			);
 
 			$request = $db->query("
@@ -207,7 +213,7 @@
 		</query>
 	</step>
 	<step>
-		<title><![CDATA[Importing attachments & avatars]]></title>
+		<title>Importing attachments</title>
 		<detect>{$from_prefix}attachments</detect>
 		<destination>{$to_prefix}attachments</destination>
 		<presql>TRUNCATE {$to_prefix}attachments;</presql>
@@ -221,7 +227,6 @@
 			if(empty($row['file_hash']))
 			{
 				$row['file_hash'] = helper::createAttachmentFilename($row['filename']);
-				helper::copy_file($smf_attachments_dir . '/' . $row['id_attach'] . '_' . $row['filename'], $attachmentUploadDir . '/' . $row['id_attach'] . '_' . $row['file_hash'] . '.ext');
 				helper::copy_file($smf_attachments_dir . '/' . $row['filename'], $attachmentUploadDir . '/' . $row['id_attach'] . '_' . $row['file_hash'] . '.ext');
 			}
 			else
@@ -231,9 +236,51 @@
 			SELECT
 				id_attach, id_thumb, id_msg, id_member, attachment_type, filename, file_hash, size, downloads,
 				width, height, fileext, mime_type, id_folder,'opaque' AS transparency, approved
-			FROM {$from_prefix}attachments;			
+			FROM {$from_prefix}attachments
+			WHERE id_msg != 0;
 		</query>
 	</step>
+	<step>
+		<title>Importing avatars</title>
+		<detect>{$from_prefix}attachments</detect>
+		<destination>{$to_prefix}attachments</destination>
+		<preparsecode>
+			//try custom_avatar_dir first
+			$request = $db->query("
+				SELECT value
+				FROM {$from_prefix}settings
+				WHERE variable='custom_avatar_dir';");
+			list ($smf_attachments_dir) = $db->fetch_row($request);
+
+			if (empty($smf_attachments_dir))
+			{
+				$request = $db->query("
+					SELECT value
+					FROM {$from_prefix}settings
+					WHERE variable='attachmentUploadDir';");
+				list ($smf_attachments_dir) = $db->fetch_row($request);
+			}
+
+			if ($avatarUploadDir == $attachmentUploadDir)
+				$row['attachment_type'] = 0;
+
+			if(empty($row['file_hash']))
+			{
+				$row['file_hash'] = helper::createAttachmentFilename($row['filename']);
+				helper::copy_file($smf_attachments_dir . '/' . $row['filename'], $avatarUploadDir . '/' . $row['id_attach'] . '_' . $row['file_hash'] . '.ext');
+			}
+			else
+				helper::copy_file($smf_attachments_dir . '/' . $row['id_attach'] . '_' . $row['file_hash'], $avatarUploadDir . '/'. $row['id_attach'] . '_' . $row['file_hash'] . '.ext');
+		</preparsecode>
+		<query>
+			SELECT
+				id_attach, id_thumb, id_msg, id_member, attachment_type, filename, file_hash, size, downloads,
+				width, height, fileext, mime_type, id_folder,'opaque' AS transparency, approved
+			FROM {$from_prefix}attachments
+			WHERE id_member != 0;		
+		</query>
+	</step>	
+
 	<step>
 		<title>Importing categories</title>
 		<detect>{$from_prefix}categories</detect>

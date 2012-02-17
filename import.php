@@ -696,7 +696,7 @@ class Importer
 					// Are we doing attachments? They're going to want a few things...
 					if ($special_table == $this->to_prefix . 'attachments')
 					{
-						if (!isset($id_attach, $attachmentUploadDir))
+						if (!isset($id_attach, $attachmentUploadDir, $avatarUploadDir))
 						{
 							$result = $db->query("
 								SELECT MAX(id_attach) + 1
@@ -710,7 +710,17 @@ class Importer
 								WHERE variable = 'attachmentUploadDir'
 								LIMIT 1");
 							list ($attachmentUploadDir) = $db->fetch_row($result);
+							
+							$result = $db->query("
+								SELECT value
+								FROM {$to_prefix}settings
+								WHERE variable = 'custom_avatar_dir'
+								LIMIT 1");
+							list ($avatarUploadDir) = $db->fetch_row($result);
 							$db->free_result($result);
+
+							if (empty($avatarUploadDir))
+								$avatarUploadDir = $attachmentUploadDir;
 
 							if (empty($id_attach))
 								$id_attach = 1;
