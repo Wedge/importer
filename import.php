@@ -585,7 +585,7 @@ class Importer
 			$template->status($substep, $_SESSION['import_steps'][$substep]['status'], $_SESSION['import_steps'][$substep]['title']);
 
 			// do we need to skip this step?
-			if ($table_test === false || !in_array($substep, $do_steps))
+			if ((isset($table_test) && $table_test === false) || !in_array($substep, $do_steps))
 			{
 				// reset some defaults
 				$current_data = '';
