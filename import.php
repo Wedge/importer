@@ -1551,7 +1551,7 @@ abstract class helper
 	* @param string $filename
 	* @return string
 	*/	
-	public static function createAttachmentFilename($filename)
+	public static function createAttachmentFilehash($filename)
 	{
 		return sha1(md5($filename . time()) . mt_rand());
 	}

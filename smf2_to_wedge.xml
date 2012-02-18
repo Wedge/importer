@@ -226,7 +226,7 @@
 
 			if(empty($row['file_hash']))
 			{
-				$row['file_hash'] = helper::createAttachmentFilename($row['filename']);
+				$row['file_hash'] = helper::createAttachmentFileHash($row['filename']);
 				helper::copy_file($smf_attachments_dir . '/' . $row['filename'], $attachmentUploadDir . '/' . $row['id_attach'] . '_' . $row['file_hash'] . '.ext');
 			}
 			else
@@ -266,7 +266,7 @@
 
 			if(empty($row['file_hash']))
 			{
-				$row['file_hash'] = helper::createAttachmentFilename($row['filename']);
+				$row['file_hash'] = helper::createAttachmentFileHash($row['filename']);
 				helper::copy_file($smf_attachments_dir . '/' . $row['filename'], $avatarUploadDir . '/' . $row['id_attach'] . '_' . $row['file_hash'] . '.ext');
 			}
 			else
