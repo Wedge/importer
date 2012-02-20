@@ -235,7 +235,7 @@
 		<query>
 			SELECT
 				id_attach, id_thumb, id_msg, id_member, attachment_type, filename, file_hash, size, downloads,
-				width, height, fileext, mime_type, id_folder,'opaque' AS transparency, approved
+				width, height, fileext, mime_type, id_folder, '' AS transparency, approved
 			FROM {$from_prefix}attachments
 			WHERE id_msg != 0;
 		</query>
@@ -275,7 +275,7 @@
 		<query>
 			SELECT
 				id_attach, id_thumb, id_msg, id_member, attachment_type, filename, file_hash, size, downloads,
-				width, height, fileext, mime_type, id_folder,'opaque' AS transparency, approved
+				width, height, fileext, mime_type, id_folder, '' AS transparency, approved
 			FROM {$from_prefix}attachments
 			WHERE id_member != 0;		
 		</query>
