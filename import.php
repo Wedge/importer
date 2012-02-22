@@ -710,7 +710,7 @@ class Importer
 								WHERE variable = 'attachmentUploadDir'
 								LIMIT 1");
 							list ($attachmentUploadDir) = $db->fetch_row($result);
-							
+
 							$result = $db->query("
 								SELECT value
 								FROM {$to_prefix}settings
@@ -778,7 +778,7 @@ class Importer
 									if (array_key_exists($ip, $row))
 									{
 										$ipv6ip = $this->expand_ip($row[$ip]);
-										
+
 										$request2 = $db->query("
 											SELECT id_ip
 											FROM {$to_prefix}log_ips
@@ -800,7 +800,7 @@ class Importer
 											$pointer = $db->insert_id();
 											$row[$ip] = $pointer;
 										}
-	
+
 										$db->free_result($request2);
 									}
 								}
@@ -1550,7 +1550,7 @@ abstract class helper
 	*
 	* @param string $filename
 	* @return string
-	*/	
+	*/
 	public static function createAttachmentFilehash($filename)
 	{
 		return sha1(md5($filename . time()) . mt_rand());
@@ -1562,10 +1562,10 @@ abstract class helper
 	* @param string $filename
 	* @return bol
 	*/
-	
+
 	public static function copy_file($source, $destination)
 	{
-		if(is_file($source))
+		if (is_file($source))
 		{
 			copy($source, $destination);
 			return false;
@@ -1908,7 +1908,7 @@ class Database
 *		- this is our main class for proper character encoding
 * 		- whatever we throw in, the output will be clean
 *
-*	array Charset::fix (string data or array)
+*	array Charset::fix(string data or array)
 *		- this function can convert an array recursively to utf-8
 *		- The input can have mixed encodings.
 *
@@ -2259,55 +2259,54 @@ class template
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<title>', isset($import->xml->general->name) ? $import->xml->general->name . ' to ' : '', 'Wedge Importer</title>
 		<script type="text/javascript">
-			function AJAXCall(url, callback, string) {
+			function AJAXCall(url, callback, string)
+			{
 				var req = init();
 				var string = string;
 				req.onreadystatechange = processRequest;
 
-				function init() {
-					if (window.XMLHttpRequest) {
+				function init()
+				{
+					if (window.XMLHttpRequest)
 						return new XMLHttpRequest();
-					} else if (window.ActiveXObject) {
+					else if (window.ActiveXObject)
 						return new ActiveXObject("Microsoft.XMLHTTP");
+				}
+
+				function processRequest()
+				{
+					// readyState of 4 signifies request is complete
+					if (req.readyState == 4)
+					{
+						// status of 200 signifies sucessful HTTP call
+						if (req.status == 200)
+							if (callback) callback(req.responseXML, string);
 					}
 				}
 
-				function processRequest () {
-				// readyState of 4 signifies request is complete
-				if (req.readyState == 4) {
-					// status of 200 signifies sucessful HTTP call
-					if (req.status == 200) {
-						if (callback) callback(req.responseXML, string);
-					}
-				}
-			}
-
-				this.doGet = function() {
-					// make a HTTP GET request to the URL asynchronously
+				// make a HTTP GET request to the URL asynchronously
+				this.doGet = function () {
 					req.open("GET", url, true);
 					req.send(null);
-				}
+				};
 			}
 
-			function validateField(string) {
+			function validateField(string)
+			{
 				var target = document.getElementById(string);
 				var from = "', isset($import->xml->general->settings) ? $import->xml->general->settings : 'null', '";
 				var to = "/Settings.php";
-
-				if (string == "path_to")
-					extend = to;
-				else
-					extend = from;
-
-				var url = "import.php?xml=true&"+ string + "=" + target.value + extend;
+				var url = "import.php?xml=true&"+ string + "=" + target.value + (string == "path_to" ? to : from);
 				var ajax = new AJAXCall(url, validateCallback, string);
 				ajax.doGet();
 			}
 
-			function validateCallback(responseXML, string) {
+			function validateCallback(responseXML, string)
+			{
 				var msg = responseXML.
 				getElementsByTagName("valid")[0].firstChild.nodeValue;
-				if (msg == "false") {
+				if (msg == "false")
+				{
 					var field = document.getElementById(string);
 					var validate = document.getElementById(\'validate_\' + string);
 					field.className = "invalid_field";
@@ -2316,7 +2315,8 @@ class template
 					var submitBtn = document.getElementById("submit_button");
 					submitBtn.disabled = true;
 				}
-				else {
+				else
+				{
 					var field = document.getElementById(string);
 					var validate = document.getElementById(\'validate_\' + string);
 					field.className = "valid_field";
@@ -2608,7 +2608,7 @@ class template
 						<dd>';
 			foreach ($steps as $key => $step)
 				echo '
-							<input type="checkbox" name="do_steps[', $key, ']" id="do_steps[', $key, ']" value="', $step['count'], '"', ($step['mandatory'] ? 'readonly="readonly" ': ' '), $step['checked'], '" />', ucfirst(str_replace('importing ', '', $step['name'])), '<br />';
+							<input type="checkbox" name="do_steps[', $key, ']" id="do_steps[', $key, ']" value="', $step['count'], '"', $step['mandatory'] ? 'readonly="readonly" ' : ' ', $step['checked'], '" />', ucfirst(str_replace('importing ', '', $step['name'])), '<br />';
 
 			echo '
 						</dd>';
@@ -2628,7 +2628,8 @@ class template
 			</div>';
 		echo '
 			<script type="text/javascript">
-				document.getElementById(\'toggle_button\').onclick = function() {
+				document.getElementById(\'toggle_button\').onclick = function ()
+				{
 					var elem = document.getElementById(\'advanced_options\');
 					var arrow_up = document.getElementById(\'arrow_up\');
 					var arrow_down = document.getElementById(\'arrow_down\');
@@ -2651,7 +2652,6 @@ class template
 					return true;
 				}
 			</script>';
-
 	}
 
 	public function status($substep, $status, $title, $hide = false)
@@ -2789,15 +2789,11 @@ class template
 
 				function createRequestObject()
 				{
-					var req;
-
 					if (window.XMLHttpRequest)
-						req = new XMLHttpRequest();
+						return new XMLHttpRequest();
 
-					else if (window.ActiveXObject)
-						req = new ActiveXObject("Microsoft.XMLHTTP");
-
-					return req;
+					if (window.ActiveXObject)
+						return new ActiveXObject("Microsoft.XMLHTTP");
 				}
 
 				// Make the XMLHttpRequest object
@@ -2815,7 +2811,6 @@ class template
 
 				function handleResponse()
 				{
-
 					if (http.readyState == 4 && http.status == 200)
 					{
 						// the PHP output
@@ -2832,10 +2827,10 @@ class template
 					setTimeout("loop()", interval);
 				}
 
-				window.onload = function()
+				window.onload = function ()
 				{
 					loop();
-				}
+				};
 			</script>';
 	}
 }
@@ -2915,7 +2910,7 @@ class Cookie
 	{
 		$cookie = unserialize($_COOKIE[$name]);
 		if (!empty($cookie) && isset($data))
-			$merged = array_merge((array)$cookie, (array)$data);
+			$merged = array_merge((array)$cookie, (array) $data);
 
 		$this->set($merged);
 		$_COOKIE[$name] = serialize($merged);
@@ -2923,4 +2918,5 @@ class Cookie
 		return true;
 	}
 }
+
 ?>
