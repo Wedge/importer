@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <importer xmlns="http://wedge.org/xml/importer" xmlns:smf="http://wedge.org/">
 	<general>
-		<name>phpBB 3</name>
+		<name>phpBB3</name>
 		<version>Wedge 0.1</version>
 		<settings>/config.php</settings>
 		<defines>IN_PHPBB</defines>
