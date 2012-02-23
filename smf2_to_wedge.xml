@@ -18,6 +18,8 @@
 			<replace>true</replace>
 		</options>
 		<code>
+			global $pretty_urls;
+
 			$do_import = array(
 				'news',
 				'compactTopicPagesContiguous',
@@ -189,7 +191,12 @@
 						REPLACE INTO {$to_prefix}settings
 							(variable, value)
 						VALUES('$row[variable]', '$row[value]')");
+
+				if ($row['variable'] == 'pretty_board_urls')
+					$pretty_urls = unserialize($row['value']);
 			}
+
+			$db->free_result($request);
 		</code>
 	</step>
 	<step type="mandatory">
@@ -312,6 +319,16 @@
 		<presql>TRUNCATE {$to_prefix}boards;</presql>
 		<preparsecode>
 			$row['url'] = substr($this->boardurl, strpos($this->boardurl, '://') + 3) . '/board' . $row['url'];
+
+			if (!empty($pretty_urls))
+			{
+				 foreach ($pretty_urls as $id_board => $url)
+				 {
+					if ($id_board == $row['id_board'])
+						$row['url'] = substr($this->boardurl, strpos($this->boardurl, '://') + 3) . '/' .$url;
+				 }
+			}
+
 			$row['urllen'] = strlen($row['url']);
 
 			if (!empty($row['member_groups']))
@@ -324,7 +341,7 @@
 						VALUES ('$allowed', $row[id_board], 'allow', 'allow')
 					");
 			}
-		</preparsecode>
+			</preparsecode>
 		<query>
 			SELECT
 				id_board,id_cat,child_level,id_parent,board_order,id_last_msg,id_msg_updated,member_groups,
