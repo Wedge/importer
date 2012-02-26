@@ -19,8 +19,14 @@
 				CHANGE COLUMN password_salt password_salt varchar(16) NOT NULL default '';
 		</presql>
 		<preparsecode>
-			if(!preg_match('/\d{4}-\d{2}-\d{2}/', $row['birthdate']))
+			if (!preg_match('/\d{4}-\d{2}-\d{2}/', $row['birthdate']))
 				$row['birthdate'] = '0001-01-01';
+
+			// data field is used temporary to dertermine the type of avatar
+			if ($row['data'] != 'remote')
+				$row['avatar'] = '';
+
+			$row['data'] = '';
 		</preparsecode>
 		<query>
 			SELECT
@@ -34,8 +40,8 @@
 				SUBSTRING(signature, 1, 65534) AS signature, hideemail AS hide_email,
 				SUBSTRING(buddylist, 1, 255) AS buddy_list, '' AS ignore_boards,
 				SUBSTRING(regip, 1, 255) AS member_ip, SUBSTRING(regip, 1, 255) AS member_ip2,
-				SUBSTRING(ignorelist, 1, 255) AS pm_ignore_list,
-				timeonline AS total_time_logged_in,	birthday AS birthdate
+				SUBSTRING(ignorelist, 1, 255) AS pm_ignore_list, avatar,
+				timeonline AS total_time_logged_in,	birthday AS birthdate, avatartype AS data
 			FROM {$from_prefix}users;
 		</query>
 	</step>
@@ -254,4 +260,105 @@
 			FROM {$from_prefix}forumsubscriptions;
 		</query>
 	</step>
+	<step>
+		<title>Importing attachments</title>
+		<detect>{$from_prefix}attachments</detect>
+		<destination>{$to_prefix}attachments</destination>
+		<options>
+			<no_add>true</no_add>
+		</options>
+		<preparsecode>
+			$keys = array('id_attach', 'size', 'filename', 'file_hash', 'id_msg', 'downloads', 'width', 'height');
+
+			if (!isset($mybb_attachment_dir))
+			{
+				$result = $db->query("
+					SELECT value
+					FROM {$from_prefix}settings
+					WHERE name = 'uploadspath'
+					LIMIT 1");
+				list ($mybb_attachment_dir) = $db->fetch_row($result);
+				$db->free_result($result);
+
+				$mybb_attachment_dir = $_POST['path_from'] . ltrim($mybb_attachment_dir, '.');
+			}
+
+			//create some useful shortcuts, we start with images..
+			$ext = strtolower(substr(strrchr($row['filename'], '.'), 1));
+			if (!in_array($ext, array('jpg', 'jpeg', 'gif', 'png')))
+				$ext = '';
+
+			$source = $mybb_attachment_dir . '/' . $row['attachname'];
+			$file_hash = helper::createAttachmentFileHash($row['filename']);
+			$destination = $attachmentUploadDir . '/' . $id_attach . '_' . $file_hash . '.ext';
+			$width = 0;
+			$height = 0;
+
+			helper::copy_file($source, $destination);
+
+			// Is image? we need a thumbnail
+			if (!empty($ext))
+			{
+				list ($width, $height) = getimagesize($destination);
+				if(empty($width))
+				{
+					$width = 0;
+					$height = 0;
+				}
+			}
+
+			//prepare our insert
+			$rows[] = implode(', ', array(
+				'id_attach' => $id_attach,
+				'size' => filesize($destination),
+				'filename' => '\'' . $row['filename'] . '\'',
+				'file_hash' => '\'' . $file_hash . '\'',
+				'id_msg' => $row['id_msg'],
+				'downloads' => $row['downloads'],
+				'width' => $width,
+				'height' => $height,
+			));
+
+			$id_attach++;
+		</preparsecode>
+		<query>
+			SELECT pid AS id_msg, downloads, filename, filesize, attachname
+			FROM {$from_prefix}attachments;
+		</query>
+	</step>
+	<step>
+		<title>Importing avatars</title>
+		<detect>{$from_prefix}users</detect>
+		<destination>{$to_prefix}attachments</destination>
+		<options>
+			<no_add>true</no_add>
+		</options>
+		<preparsecode>
+			$keys = array('id_attach', 'size', 'filename', 'file_hash', 'id_member');
+
+			//create some useful shortcuts
+			$source = $_POST['path_from'] . strtok(ltrim($row['filename'], '.'), '?');
+			$filename = preg_replace('~avatar_(.+?)\?~is', 'avatar_$1', $row['filename']);
+			$file_hash = helper::createAttachmentFileHash($filename);
+			$destination = $attachmentUploadDir . '/' . $id_attach . '_' . $file_hash . '.ext';
+
+			helper::copy_file($source, $destination);
+
+			$rows[] = implode(', ', array(
+				'id_attach' => $id_attach,
+				'size' => filesize($destination),
+				'filename' => '\'' . $row['filename'] . '\'',
+				'file_hash' => '\'' . $file_hash . '\'',
+				'id_member' => $row['id_member'],
+			));
+
+			$id_attach++;
+		</preparsecode>
+		<query>
+			SELECT uid AS id_member, avatar AS filename
+			FROM {$from_prefix}users
+			WHERE avatartype = 'upload'
+			OR avatartype = 'gallery';
+		</query>
+	</step>	
 </importer>
