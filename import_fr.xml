@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lang xmlns="http://wedge.org/xml/importer/lang" xmlns:smf="http://wedge.org" languagecode="en">
+	<item name="we.imp.locale">en</item>
+	<item name="we.imp.which_software"><![CDATA[Quel logiciel utilisez-vous ?]]></item>
+	<item name="we.imp.multiple_files"><![CDATA[L'outil d'importation a trouvé plusieurs fichiers d'importation. Choisissez celui que vous voulez utiliser.]]></item>
+	<item name="we.imp.not_here"><![CDATA[Mais où est donc Ornicar ?]]></item>
+	<item name="we.imp.check_more"><![CDATA[Si le logiciel que vous recherchez n'apparaît pas dans la liste ci-dessus, assurez-vous qu'un script d'importation pour celui-ci est disponible sur <a href="http://wedge.org/">wedge.org</a>. Si ce n'est pas le cas et que vous trouvez cela impardonnable, n'hésitez pas à suggérer que nous l'écrivions.]]></item>
+	<item name="we.imp.having_problems"><![CDATA[Si vous rencontrez d'autres difficultés avec cet outil d'importation, vous pouvez demander de l'aide sur nos <a href="http://wedge.org">forums</a>.]]></item>
+	<item name="we.imp.not_found"><![CDATA[L'importateur n'a trouvé aucune donnée à importer. Merci de vérifier si un script d'importation est disponible pour votre forum sur <a href="http://wedge.org/">wedge.org</a>. Si ce n'est pas le cas et que vous trouvez cela impardonnable, n'hésitez pas à suggérer que nous l'écrivions.]]></item>
+	<item name="we.imp.not_found_download"><![CDATA[Après l'avoir téléchargé, placez-le simplement dans le même dossier que <b>ce fichier import.php</b>. Si vous rencontrez d'autres difficultés avec cet outil d'importation, vous pouvez demander de l'aide sur nos <a href="http://wedge.org">forums</a>.]]></item>
+	<item name="we.imp.try_again"><![CDATA[Réessayez !]]></item>
+	<item name="we.imp.settings_not_found"><![CDATA[L'importateur n'a pas pu trouver Wedge dans le chemin d'accès spécifié. Merci de vérifier que vous avez entré le chemin correct, et qu'il est bien installé et fonctionnel à cet endroit.]]></item>
+	<item name="we.imp.open_basedir"><![CDATA[L'importateur a détecté que votre hébergeur a activé l'option open_basedir sur ce serveur. Demandez-lui de désactiver ce paramètre, ou essayez de déplacer le contenu de votre %s vers le dossier HTML public de votre site.']]></item>
+	<item name="we.imp.config_not_found"><![CDATA[Paramètres introuvables pour %s. Veuillez vérifier que vous avez rentré le bon le chemin, et réessayez.]]></item>
+	<item name="we.imp.password_incorrect"><![CDATA[Le mot de passe d'accès à la base de données est incorrect. Assurez-vous d'utiliser le bon mot de passe (pour l'utilisateur Wedge) et réessayez. En cas de doute, utilisez le mot de passe indiqué dans le fichier Settings.php de votre installation de Wedge.]]></item>
+	<item name="we.imp.select_step"><![CDATA[Vous devez choisir au moins un élément à importer.]]></item>
+	<item name="we.imp.permission_denied"><![CDATA[Désolé, les informations de connexion à la base de données spécifiées dans votre installation de Wedge ne permettent pas l'installation de %1. Cela signifie peut-être que l'installation n'existe pas, ou que le compte MySQL utilisé n'a pas la permission d'y accéder.<br /><br />L'erreur que MySQL a retournée est&nbsp;: ']]></item>
+	<item name="we.imp.before_continue"><![CDATA[Avant de continuer...]]></item>
+	<item name="we.imp.before_details"><![CDATA[Cet importateur assume que Wedge est déjà installé, et qu'il fonctionne correctement. Il copie les membres, messages et autres données issues de votre installation &quot;source&quot; de %s, vers Wedge, il faut donc que Wedge soit fonctionnel à ce stade.<p>Tout ou partie des données de votre installation de Wedge seront <b>effacées</b>.</p>]]></item>
+	<item name="we.imp.wedge_installed"><![CDATA[Réessayez !]]></item>
+	<item name="we.imp.where"><![CDATA[D'où à où ?]]></item>
+	<item name="we.imp.locate_wedge"><![CDATA[L'importateur n'a besoin de connaître que l'emplacement du site à importer et celui de destination, après quoi il devrait pouvoir gérer le reste tout seul.]]></item>
+	<item name="we.imp.advanced_options"><![CDATA[Options avancées]]></item>
+	<item name="we.imp.path_to_wedge"><![CDATA[Chemin de Wedge]]></item>
+	<item name="we.imp.path_to_source"><![CDATA[Chemin de ]]></item>
+	<item name="we.imp.restart_after"><![CDATA[mettre en pause le script toutes les (secondes)]]></item>
+	<item name="we.imp.countdown"><![CDATA[compte-à-rebours Javascript (temps de repos)]]></item>
+	<item name="we.imp.right_path"><![CDATA[C'est sans doute le bon chemin.]]></item>
+	<item name="we.imp.change_path"><![CDATA[Vous devez changer la valeur de cette boîte.]]></item>
+	<item name="we.imp.database_passwd"><![CDATA[Mot de passe de la base de données de Wedge]]></item>
+	<item name="we.imp.database_verify"><![CDATA[Mot de passe MySQL (pour vérification uniquement)]]></item>
+	<item name="we.imp.selected_only"><![CDATA[Importer les éléments sélectionnés uniquement]]></item>
+	<item name="we.imp.empty_log"><![CDATA[Vider le journal d'erreurs d'importation ?]]></item>
+	<item name="we.imp.continue"><![CDATA[Continuer]]></item>
+	<item name="we.imp.not_this"><![CDATA[Pas ce logiciel ?]]></item>
+	<item name="we.imp.skipped"><![CDATA[ignoré]]></item>
+	<item name="we.imp.not_found_skipped"><![CDATA[introuvable, ignoré]]></item>
+	<item name="we.imp.pick_different"><![CDATA[Si ce n'est pas le bon logiciel à importer, vous pouvez retourner en arrière et <a href="%s?import_script=">choisir un autre script d'import</a>.)]]></item>
+	<item name="we.imp.recalculate"><![CDATA[Recalcule les statistiques du forum]]></item>
+	<item name="we.imp.importing"><![CDATA[Importation en cours]]></item>
+	<item name="we.imp.complete"><![CDATA[Importation terminée !]]></item>
+	<item name="we.imp.congrats"><![CDATA[Félicitations, l'importateur a accompli son travail. Si vous avez des problèmes en rapport avec l'importation, ou besoin d'aide sur l'utilisation de Wedge, vous pouvez poser vos question sur <a href="http://wedge.org">nos forums</a>.]]></item>
+	<item name="we.imp.check_box"><![CDATA[Cochez cette case pour effacer l'outil d'importation sans attendre, pour raisons de sécurité.]]></item>
+	<item name="we.imp.may_fail"><![CDATA[Ne fonctionne pas sur tous les serveurs]]></item>
+	<item name="we.imp.not_done"><![CDATA[Ce n'est pas fini !]]></item>
+	<item name="we.imp.importer_paused"><![CDATA[L'importateur a mis en pause le script pour quelques secondes afin d'éviter la surchauffe. Rassurez-vous, <b>jusqu'ici, tout va bien</b>.]]></item>
+	<item name="we.imp.all_imported"><![CDATA[Maintenant que l'importation est terminée, votre installation de Wedge devrait avoir hérité de toutes les données de votre installation de %s.]]></item>
+	<item name="we.imp.smooth_transition"><![CDATA[Nous espérons que la transition aura été sans souci !]]></item>
+</lang>

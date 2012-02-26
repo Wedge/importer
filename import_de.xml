@@ -11,7 +11,7 @@
 	<item name="we.imp.try_again"><![CDATA[Erneut versuchen!]]></item>
 	<item name="we.imp.settings_not_found"><![CDATA[This importer was unable to find Wedge in the path you specified. Please double check the path, and that it is already installed there.]]></item>
 	<item name="we.imp.open_basedir"><![CDATA[The importer detected that your host has open_basedir enabled on this server. Please ask your host to disable this setting or try moving the contents of your %s to the public html folder of your site.']]></item>
-	<item name="we.imp.config_not_found"><![CDATA[Unable to find the settings for %s Please double check the path and try again.]]></item>
+	<item name="we.imp.config_not_found"><![CDATA[Unable to find the settings for %s. Please double check the path and try again.]]></item>
 	<item name="we.imp.password_incorrect"><![CDATA[The database password you entered was incorrect. Please make sure you are using the right password (for the Wedge user!) and try it again. If in doubt, use the password from Settings.php in the Wedge installation.]]></item>
 	<item name="we.imp.select_step"><![CDATA[Ey, was soll der Scheiss. Was soll ich bitte importieren wenn Du hier alle Haken abgewählt hast. Bitte mindestens einen Bereich auswählen.]]></item>
 	<item name="we.imp.permission_denied"><![CDATA[Sorry, the database connection information used in the specified installation of Wedge cannot access the installation of %1. This may either mean that the installation doesn't exist, or that the MySQL account used does not have permissions to access it.<br /><br />The error MySQL gave was: ']]></item>

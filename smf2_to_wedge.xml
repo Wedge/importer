@@ -321,13 +321,9 @@
 			$row['url'] = substr($this->boardurl, strpos($this->boardurl, '://') + 3) . '/board' . $row['url'];
 
 			if (!empty($pretty_urls))
-			{
 				 foreach ($pretty_urls as $id_board => $url)
-				 {
 					if ($id_board == $row['id_board'])
 						$row['url'] = substr($this->boardurl, strpos($this->boardurl, '://') + 3) . '/' .$url;
-				 }
-			}
 
 			$row['urllen'] = strlen($row['url']);
 
@@ -341,7 +337,7 @@
 						VALUES ('$allowed', $row[id_board], 'allow', 'allow')
 					");
 			}
-			</preparsecode>
+		</preparsecode>
 		<query>
 			SELECT
 				id_board,id_cat,child_level,id_parent,board_order,id_last_msg,id_msg_updated,member_groups,

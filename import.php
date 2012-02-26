@@ -2105,7 +2105,7 @@ class lng
 		// detect the browser language
 		$language = self::detect_browser_language();
 
-		// loop through the prefered languages and try to find the related language file
+		// loop through the preferred languages and try to find the related language file
 		foreach ($language as $key => $value)
 		{
 			if (file_exists(dirname(__FILE__) . '/import_' . $key . '.xml'))
@@ -2170,7 +2170,6 @@ class lng
 
 	protected static function detect_browser_language()
 	{
-
 		if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
 		{
 			// break up string into pieces (languages and q factors)
@@ -2179,20 +2178,20 @@ class lng
 			if (count($lang_parse[1]))
 			{
 				// create a list like "en" => 0.8
-				$prefered = array_combine($lang_parse[1], $lang_parse[4]);
+				$preferred = array_combine($lang_parse[1], $lang_parse[4]);
 
 				// set default to 1 for any without q factor (IE fix)
-				foreach ($prefered as $lang => $val)
+				foreach ($preferred as $lang => $val)
 				{
 					if ($val === '')
-						$prefered[$lang] = 1;
+						$preferred[$lang] = 1;
 				}
 
 				// sort list based on value
-				arsort($prefered, SORT_NUMERIC);
+				arsort($preferred, SORT_NUMERIC);
 			}
 		}
-		return $prefered;
+		return $preferred;
 	}
 
 }
