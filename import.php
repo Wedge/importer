@@ -222,6 +222,14 @@ class Importer
 			foreach (explode(',', $this->xml->general->globals) as $global)
 				global $$global;
 
+		//Dirty hack
+		if (isset($_SESSION['store_globals']))
+			foreach ($_SESSION['store_globals'] as $varname => $value)
+			{
+				global $$varname;
+				$$varname = $value;  
+			}
+
 		// !! WTF?
 		if ($this->xml->general->form)
 			foreach ($this->xml->general->form->children() as $global)
@@ -1519,6 +1527,16 @@ abstract class helper
 		$template->time_limit($bar);
 		$template->footer();
 		exit;
+	}
+	/**
+	* helper function for storing vars that need to be global
+	*
+	* @param string $variable
+	* @param string $value
+	*/
+	public static function store_global($variable, $value)
+	{
+		$_SESSION['store_globals'][$variable] = $value;
 	}
 
 	/**

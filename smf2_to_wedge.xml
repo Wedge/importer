@@ -192,7 +192,10 @@
 						VALUES('$row[variable]', '$row[value]')");
 
 				if ($row['variable'] == 'pretty_board_urls')
+				{
 					$pretty_urls = $row['value'];
+					helper::store_global('pretty_urls', $row['value']);
+				}
 			}
 
 			$db->free_result($request);
@@ -352,9 +355,9 @@
 		<presql>TRUNCATE {$to_prefix}topics;</presql>
 		<query>
 			SELECT
-				id_topic,is_sticky AS is_pinned,id_board,id_first_msg,id_last_msg,id_member_started,
-				id_member_updated,id_poll,id_previous_board,id_previous_topic,num_replies,
-				num_views,locked,unapproved_posts,approved
+				id_topic, is_sticky AS is_pinned, id_board, id_first_msg, id_last_msg, id_member_started,
+				id_member_updated, id_poll,id_previous_board, id_previous_topic, num_replies,
+				num_views, locked, unapproved_posts, approved, '' AS tags
 			FROM {$from_prefix}topics;
 		</query>
 	</step>
