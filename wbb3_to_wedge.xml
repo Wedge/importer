@@ -10,7 +10,6 @@
 		</form>
 		<from_prefix>`$dbName`.</from_prefix>
 		<table_test>{$from_prefix}{$wbb_prefix}user;</table_test>
-		<globals>userOptions</globals>
 		<ip_to_ipv6>member_ip, member_ip2</ip_to_ipv6>
 		<ip_to_pointer>poster_ip</ip_to_pointer>
 		<custom_functions>
@@ -85,6 +84,8 @@
 
 			while ($wbbOpt = $db->fetch_assoc($request))
 				$userOptions[$wbbOpt['optionName']]= $wbbOpt['optionID'];
+
+			helper::store_global('userOptions',$userOptions);
 			$db->free_result($request);
 		</code>
 	</step>
@@ -230,7 +231,6 @@
 		<destination>{$to_prefix}messages</destination>
 		<presql>TRUNCATE {$to_prefix}messages;</presql>
 		<options>
-			<ignore>false</ignore>
 			<slashes>false</slashes>
 			<limit>100</limit>
 		</options>
