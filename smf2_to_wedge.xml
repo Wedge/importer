@@ -7,6 +7,7 @@
 		<from_prefix>`$db_name`.$db_prefix</from_prefix>
 		<table_test>{$from_prefix}members;</table_test>
 		<defines>SMF=1</defines>
+		<globals>pretty_urls</globals>
 		<ip_to_ipv6>member_ip, member_ip2, ip</ip_to_ipv6>
 		<ip_to_pointer>poster_ip</ip_to_pointer>
 	</general>
@@ -214,7 +215,7 @@
 				usertitle, notify_announcements, notify_regularity, notify_send_body,
 				notify_types, member_ip, member_ip2, secret_question, secret_answer, id_theme, is_activated,
 				validation_code, id_msg_last_visit, additional_groups, smiley_set, id_post_group,
-				total_time_logged_in, password_salt, ignore_boards, warning, passwd_flood,
+				total_time_logged_in, password_salt, ignore_boards, IFNULL(warning, 0) AS warning, passwd_flood,
 				pm_receive_from, '' AS data
 			FROM {$from_prefix}members;
 		</query>

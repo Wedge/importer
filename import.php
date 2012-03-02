@@ -1721,7 +1721,7 @@ class Database
 			$clean_name = strtr($row['filename'], 'ŠŽšžŸÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüýÿ', 'SZszYAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy');
 			$clean_name = strtr($clean_name, array('Þ' => 'TH', 'þ' => 'th', 'Ð' => 'DH', 'ð' => 'dh', 'ß' => 'ss', 'Œ' => 'OE', 'œ' => 'oe', 'Æ' => 'AE', 'æ' => 'ae', 'µ' => 'u'));
 			$clean_name = preg_replace(array('/\s/', '/[^\w_\.\-]/'), array('_', ''), $clean_name);
-			$enc_name = $row['id_attach'] . '_' . strtr($clean_name, '.', '_') . md5($clean_name);
+			$enc_name = $row['id_attach'] . '_' . strtr($clean_name, '.', '_') . md5($clean_name) . '.ext';
 			$clean_name = preg_replace('~\.[\.]+~', '.', $clean_name);
 
 			if (file_exists($attachmentUploadDir . '/' . $enc_name))
@@ -1729,7 +1729,8 @@ class Database
 			else
 				$filename = $attachmentUploadDir . '/' . $clean_name;
 
-			@unlink($filename);
+			if (is_file($filename))
+				unlink($filename);
 		}
 		$this->free_result($result);
 	}
@@ -1742,7 +1743,7 @@ class Database
 		if (isset($_REQUEST['debug']))
 			$_SESSION['import_debug'] = !empty($_REQUEST['debug']);
 
-		if (trim($string) == 'TRUNCATE ' . $GLOBALS['to_prefix'] . 'attachments')
+		if (trim($string) == 'TRUNCATE ' . $GLOBALS['to_prefix'] . 'attachments;')
 			$this->removeAttachments();
 
 		$result = @mysql_query($string);
