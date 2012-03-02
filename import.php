@@ -219,16 +219,13 @@ class Importer
 			}
 
 		if ($this->xml->general->globals)
-		{
-			foreach ($this->xml->general->globals as $global)
+			foreach (explode(',', $this->xml->general->globals) as $global)
 				global $$global;
-		}
 
+		// !! WTF?
 		if ($this->xml->general->form)
-		{
 			foreach ($this->xml->general->form->children() as $global)
 				global $$global;
-		}
 
 		// Cannot find Settings.php?
 		if (!file_exists($_POST['path_to'] . '/Settings.php'))
@@ -526,10 +523,8 @@ class Importer
 		global $db, $template, $cookie, $to_prefix;
 
 		if ($this->xml->general->globals)
-		{
-			foreach ($this->xml->general->globals as $global)
-			global $$global;
-		}
+			foreach (explode(',', $this->xml->general->globals) as $global)
+				global $$global;
 
 		$cookie -> set(array($_POST['path_to'], $_POST['path_from']));
 		$current_data = '';
@@ -2303,8 +2298,7 @@ class template
 
 			function validateCallback(responseXML, string)
 			{
-				var msg = responseXML.
-				getElementsByTagName("valid")[0].firstChild.nodeValue;
+				var msg = responseXML.getElementsByTagName("valid")[0].firstChild.nodeValue;
 				if (msg == "false")
 				{
 					var field = document.getElementById(string);
@@ -2608,7 +2602,7 @@ class template
 						<dd>';
 			foreach ($steps as $key => $step)
 				echo '
-							<input type="checkbox" name="do_steps[', $key, ']" id="do_steps[', $key, ']" value="', $step['count'], '"', $step['mandatory'] ? 'readonly="readonly" ' : ' ', $step['checked'], '" />', ucfirst(str_replace('importing ', '', $step['name'])), '<br />';
+							<label><input type="checkbox" name="do_steps[', $key, ']" id="do_steps[', $key, ']" value="', $step['count'], '"', $step['mandatory'] ? 'readonly="readonly" ' : ' ', $step['checked'], '" /> ', ucfirst(str_replace('importing ', '', $step['name'])), '</label><br />';
 
 			echo '
 						</dd>';
@@ -2694,11 +2688,8 @@ class template
 				<script type="text/javascript"><!-- // --><![CDATA[
 					function doTheDelete()
 					{
-						var theCheck = document.getElementById ? document.getElementById("delete_self") : document.all.delete_self;
-						var tempImage = new Image();
-						tempImage.src = "', $_SERVER['PHP_SELF'], '?delete=1&" + (new Date().getTime());
-						tempImage.width = 0;
-						theCheck.disabled = true;
+						new Image().src = "', $_SERVER['PHP_SELF'], '?delete=1&" + (+Date());
+						(document.getElementById ? document.getElementById("delete_self") : document.all.delete_self).disabled = true;
 					}
 				// ]]></script>';
 		echo '
@@ -2708,24 +2699,22 @@ class template
 
 	public function time_limit($bar)
 	{
-		if (isset($bar))
+		if (!empty($bar))
 			echo '
 			<div id="progressbar">
-				<div id="inner_bar" style="width:', $bar, '%"></div>
+				<div id="inner_bar" style="width: ', $bar, '%"></div>
 			</div>';
 
 		echo '
 		</div>
 		<h2 style="margin-top: 2ex">', lng::get('we.imp.not_done'),'</h2>
 		<div class="content">
-			<p>', lng::get('we.imp.importer_paused'),'</p>';
+			<p>', lng::get('we.imp.importer_paused'), '</p>
 
-		echo '
 			<form action="', $_SERVER['PHP_SELF'], '?step=', $_GET['step'], isset($_GET['substep']) ? '&amp;substep=' . $_GET['substep'] : '', '&amp;start=', $_REQUEST['start'], '" method="post" name="autoSubmit">
 				<div align="right" style="margin: 1ex"><input name="b" type="submit" value="', lng::get('we.imp.continue'),'" /></div>
-			</form>';
+			</form>
 
-		echo '
 			<script type="text/javascript"><!-- // --><![CDATA[
 				var countdown = 3;
 				window.onload = doAutoSubmit;
