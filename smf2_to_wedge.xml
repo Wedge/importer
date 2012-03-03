@@ -176,6 +176,8 @@
 				'paid_currency_code',
 				'paid_currency_symbol',
 				'paypal_email',
+				'smiley_enable',
+				'messageIcons_enable',
 			);
 
 			$request = $db->query("
@@ -581,6 +583,26 @@
 			FROM {$from_prefix}smileys;
 		</query>
 	</step>
+	<step>
+		<title>Copying smileys</title>
+		<detect>{$from_prefix}smileys</detect>
+		<code>
+			$request = $db->query("
+				SELECT value
+				FROM {$to_prefix}settings
+				WHERE variable='smileys_dir';");
+			list ($we_smileys_dir) = $db->fetch_row($request);
+
+			$request = $db->query("
+				SELECT value
+				FROM {$from_prefix}settings
+				WHERE variable='smileys_dir';");
+			list ($smf_smileys_dir) = $db->fetch_row($request);
+
+			helper::copy_smileys($smf_smileys_dir, $we_smileys_dir);
+		</code>
+	</step>
+	
 	<step>
 		<title>Importing statistics (activity log)</title>
 		<detect>{$from_prefix}log_activity</detect>

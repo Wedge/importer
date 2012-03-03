@@ -1528,6 +1528,7 @@ abstract class helper
 		$template->footer();
 		exit;
 	}
+
 	/**
 	* helper function for storing vars that need to be global
 	*
@@ -1575,7 +1576,6 @@ abstract class helper
 	* @param string $filename
 	* @return bol
 	*/
-
 	public static function copy_file($source, $destination)
 	{
 		if (is_file($source))
