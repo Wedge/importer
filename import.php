@@ -309,7 +309,7 @@ class Importer
 		try
 		{
 			$db = new Database($db_server, $db_user, $db_passwd, $db_persist);
-			// Wedge is UTF8 only, let's set our mysql connetction to utf8
+			// Wedge is UTF8 only, let's set our mysql connection to utf8
 			$db->query('SET NAMES \'utf8\'');
 		}
 		catch(Exception $e)
@@ -1428,7 +1428,7 @@ class Importer
 			helper::pastTime(12);
 		}
 
-		// Lets rebuild the indexes.
+		// Let's rebuild the indexes.
 		if ($_GET['substep'] <= 12)
 		{
 			$knownKeys = array(
@@ -2084,7 +2084,7 @@ class lng
 	private static $lang = array();
 
 	/**
-	* Adds a new variable to the lang.
+	* Adds a new variable to $lang.
 	*
 	* @param string $key Name of the variable
 	* @param mixed $value Value of the variable
@@ -2210,10 +2210,9 @@ class lng
 
 }
 
-	/**
-	* this is our UI
-	*
-	*/
+/**
+* This is our UI
+*/
 class template
 {
 	/**
@@ -2309,7 +2308,7 @@ class template
 				var target = document.getElementById(string);
 				var from = "', isset($import->xml->general->settings) ? $import->xml->general->settings : 'null', '";
 				var to = "/Settings.php";
-				var url = "import.php?xml=true&"+ string + "=" + target.value + (string == "path_to" ? to : from);
+				var url = "import.php?xml=true&" + string + "=" + target.value.replace(/\/+$/g, "") + (string == "path_to" ? to : from);
 				var ajax = new AJAXCall(url, validateCallback, string);
 				ajax.doGet();
 			}
@@ -2666,6 +2665,14 @@ class template
 			</script>';
 	}
 
+	/**
+	 * Display notification with the given status
+	 *
+	 * @param int $substep
+	 * @param int $status
+	 * @param string $title
+	 * @param bool $hide = false
+	 */
 	public function status($substep, $status, $title, $hide = false)
 	{
 		if (isset($title) && $hide == false)
@@ -2684,12 +2691,23 @@ class template
 			echo '<br />';
 	}
 
+	/**
+	 * Display information related to step2
+	 */
 	public function step2()
 	{
 		echo '
 				<span style="width: 250px; display: inline-block">', lng::get('we.imp.recalculate'), '...</span> ';
 	}
 
+	/**
+	 * Display last step UI, completion status and allow eventually
+	 * to delete the scripts
+	 *
+	 * @param string $name
+	 * @param string $boardurl
+	 * @param bool $writable if the files are writable, the UI will allow deletion
+	 */
 	public function step3($name, $boardurl, $writable)
 	{
 		echo '
@@ -2715,6 +2733,12 @@ class template
 				<p>', lng::get('we.imp.smooth_transition'), '</p>';
 	}
 
+	/**
+	 * Display the progress bar,
+	 * and inform the user about when the script is paused and re-run.
+	 *
+	 * @param int $bar
+	 */
 	public function time_limit($bar)
 	{
 		if (!empty($bar))
