@@ -147,8 +147,6 @@
 				'reg_verification',
 				'enable_buddylist',
 				'birthday_email',
-				'dont_repeat_theme_core',
-				'dont_repeat_smileys_20',
 				'globalCookies',
 				'default_timezone',
 				'memberlist_updated',
@@ -205,7 +203,7 @@
 				notifyAnnouncements AS notify_announcements, notifyOnce AS notify_regularity,
 				notifySendBody AS notify_send_body,	notifyTypes AS notify_types,
 				memberIP AS member_ip, memberIP2 AS member_ip2,	secretQuestion AS secret_question,
-				secretAnswer AS secret_answer, ID_THEME AS id_theme, is_activated,
+				secretAnswer AS secret_answer, is_activated,
 				validation_code, ID_MSG_LAST_VISIT AS id_msg_last_visit, additionalGroups AS additional_groups,
 				smileySet AS smiley_set, ID_POST_GROUP AS id_post_group,
 				totalTimeLoggedIn AS total_time_logged_in, passwordSalt AS password_salt
@@ -260,7 +258,7 @@
 				ID_PARENT AS id_parent, boardOrder AS board_order, ID_LAST_MSG AS id_last_msg,
 				ID_MSG_UPDATED AS id_msg_updated, memberGroups AS member_groups,
 				name, description, numTopics AS num_topics, numPosts AS num_posts,
-				countPosts AS count_posts,ID_THEME AS id_theme,	override_theme, ID_BOARD AS url
+				countPosts AS count_posts, override_theme AS override_skin, ID_BOARD AS url
 			FROM {$from_prefix}boards;
 		</query>
 	</step>
