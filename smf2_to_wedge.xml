@@ -147,8 +147,6 @@
 				'reg_verification',
 				'enable_buddylist',
 				'birthday_email',
-				'dont_repeat_theme_core',
-				'dont_repeat_smileys_20',
 				'globalCookies',
 				'default_timezone',
 				'memberlist_updated',
@@ -215,7 +213,7 @@
 				gender, birthdate, website_url, website_title, location, hide_email, show_online,
 				time_format, signature, time_offset, avatar, pm_email_notify,
 				usertitle, notify_announcements, notify_regularity, notify_send_body,
-				notify_types, member_ip, member_ip2, secret_question, secret_answer, id_theme, is_activated,
+				notify_types, member_ip, member_ip2, secret_question, secret_answer, is_activated,
 				validation_code, id_msg_last_visit, additional_groups, smiley_set, id_post_group,
 				total_time_logged_in, password_salt, ignore_boards, IFNULL(warning, 0) AS warning, passwd_flood,
 				pm_receive_from, '' AS data
@@ -344,8 +342,8 @@
 		<query>
 			SELECT
 				id_board, id_cat, child_level, id_parent, board_order, id_last_msg, id_msg_updated, member_groups,
-				id_profile, name, description, num_topics, num_posts, count_posts, id_theme,
-				override_theme, unapproved_posts, unapproved_topics, redirect, id_board AS url
+				id_profile, name, description, num_topics, num_posts, count_posts,
+				override_theme AS override_skin, unapproved_posts, unapproved_topics, redirect, id_board AS url
 			FROM {$from_prefix}boards;
 		</query>
 	</step>
@@ -358,7 +356,7 @@
 			SELECT
 				id_topic, is_sticky AS is_pinned, id_board, id_first_msg, id_last_msg, id_member_started,
 				id_member_updated, id_poll,id_previous_board, id_previous_topic, num_replies,
-				num_views, locked, unapproved_posts, approved, '' AS tags
+				num_views, locked, unapproved_posts, approved
 			FROM {$from_prefix}topics;
 		</query>
 	</step>
