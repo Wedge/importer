@@ -39,7 +39,7 @@
 	<item name="we.imp.recalculate"><![CDATA[Recalcule les statistiques du forum]]></item>
 	<item name="we.imp.importing"><![CDATA[Importation en cours]]></item>
 	<item name="we.imp.complete"><![CDATA[Importation terminée !]]></item>
-	<item name="we.imp.congrats"><![CDATA[Félicitations, l'importateur a accompli son travail. Si vous avez des problèmes en rapport avec l'importation, ou besoin d'aide sur l'utilisation de Wedge, vous pouvez poser vos question sur <a href="http://wedge.org">nos forums</a>.]]></item>
+	<item name="we.imp.congrats"><![CDATA[Félicitations, l'importateur a accompli son travail. Si vous avez des problèmes en rapport avec l'importation, ou besoin d'aide sur l'utilisation de Wedge, vous pouvez poser vos questions sur <a href="http://wedge.org">nos forums</a>.]]></item>
 	<item name="we.imp.check_box"><![CDATA[Cochez cette case pour effacer l'outil d'importation sans attendre, pour raisons de sécurité.]]></item>
 	<item name="we.imp.may_fail"><![CDATA[Ne fonctionne pas sur tous les serveurs]]></item>
 	<item name="we.imp.not_done"><![CDATA[Ce n'est pas fini !]]></item>
