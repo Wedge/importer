@@ -74,7 +74,7 @@ class Importer
 
 		ob_start();
 
-		// disable gzip compression if possible
+		// Disable gzip compression if possible
 		if (is_callable('apache_setenv'))
 			apache_setenv('no-gzip', '1');
 
@@ -97,6 +97,7 @@ class Importer
 
 			exit;
 		}
+
 		// Empty the error log?
 		if (isset($_REQUEST['empty_error_log']))
 			@unlink(dirname(__FILE__) . '/error_log');
@@ -116,9 +117,9 @@ class Importer
 		elseif (isset($_POST['path_from']) || isset($_POST['path_to']))
 		{
 			if (isset($_POST['path_from']))
-				$_POST['path_from'] = substr($_POST['path_from'], -1) == '/' ? substr($_POST['path_from'], 0, -1) : $_POST['path_from'];
+				$_POST['path_from'] = rtrim($_POST['path_from'], '/');
 			if (isset($_POST['path_to']))
-				$_POST['path_to'] = substr($_POST['path_to'], -1) == '/' ? substr($_POST['path_to'], 0, -1) : $_POST['path_to'];
+				$_POST['path_to'] = rtrim($_POST['path_to'], '/');
 
 			$_SESSION['import_paths'] = array(@$_POST['path_from'], @$_POST['path_to']);
 		}
