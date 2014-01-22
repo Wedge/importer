@@ -74,7 +74,7 @@ class Importer
 
 		ob_start();
 
-		// Disable gzip compression if possible
+		// disable gzip compression if possible
 		if (is_callable('apache_setenv'))
 			apache_setenv('no-gzip', '1');
 
@@ -97,7 +97,6 @@ class Importer
 
 			exit;
 		}
-
 		// Empty the error log?
 		if (isset($_REQUEST['empty_error_log']))
 			@unlink(dirname(__FILE__) . '/error_log');
@@ -117,9 +116,9 @@ class Importer
 		elseif (isset($_POST['path_from']) || isset($_POST['path_to']))
 		{
 			if (isset($_POST['path_from']))
-				$_POST['path_from'] = rtrim($_POST['path_from'], '/');
+				$_POST['path_from'] = substr($_POST['path_from'], -1) == '/' ? substr($_POST['path_from'], 0, -1) : $_POST['path_from'];
 			if (isset($_POST['path_to']))
-				$_POST['path_to'] = rtrim($_POST['path_to'], '/');
+				$_POST['path_to'] = substr($_POST['path_to'], -1) == '/' ? substr($_POST['path_to'], 0, -1) : $_POST['path_to'];
 
 			$_SESSION['import_paths'] = array(@$_POST['path_from'], @$_POST['path_to']);
 		}
@@ -223,7 +222,7 @@ class Importer
 			foreach (explode(',', $this->xml->general->globals) as $global)
 				global $$global;
 
-		// Dirty hack
+		//Dirty hack
 		if (isset($_SESSION['store_globals']))
 			foreach ($_SESSION['store_globals'] as $varname => $value)
 			{
@@ -289,7 +288,7 @@ class Importer
 					$$k = $v;
 			}
 		}
-		// Everything should be alright now... No cross server includes, we hope...
+		// Everything should be alright now... no cross server includes, we hope...
 		require_once($_POST['path_to'] . '/Settings.php');
 		$GLOBALS['boardurl'] = $boardurl;
 		$this->boardurl = $boardurl;
@@ -313,7 +312,7 @@ class Importer
 			// Wedge is UTF8 only, let's set our mysql connection to utf8
 			$db->query('SET NAMES \'utf8\'');
 		}
-		catch (Exception $e)
+		catch(Exception $e)
 		{
 			import_exception::exception_handler($e);
 			die();
@@ -333,13 +332,19 @@ class Importer
 			eval($this->xml->general->custom_functions);
 
 		if (isset($this->xml->general->variables))
+		{
 			foreach ($this->xml->general->variables as $eval_me)
 				eval($eval_me);
+		}
 
 		if (isset($this->xml->general->settings))
+		{
 			foreach ($this->xml->general->settings as $file)
+			{
 				if (file_exists($_POST['path_from'] . $file))
 					require_once($_POST['path_from'] . $file);
+			}
+		}
 
 		if (isset($this->xml->general->from_prefix))
 		{
@@ -659,16 +664,15 @@ class Importer
 						SELECT COUNT(*)
 						FROM $count");
 					list ($counter) = $db->fetch_row($result2);
-					if (isset($this->count))
-						$this->count->$substep = $counter;
+					if (isset($this->count)) $this->count->$substep = $counter;
 					$db->free_result($result2);
 				}
 
 				// create some handy shortcuts
-				$ignore = isset($steps->options->ignore) && ($steps->options->ignore == true) && !isset($steps->options->replace);
-				$replace = isset($steps->options->replace) && ($steps->options->replace == true);
-				$no_add = isset($steps->options->no_add) && ($steps->options->no_add == true);
-				$ignore_slashes = isset($steps->options->ignore_slashes) && ($steps->options->ignore_slashes == true);
+				$ignore = (isset($steps->options->ignore) && $steps->options->ignore == true && !isset($steps->options->replace)) ? true : false;
+				$replace = (isset($steps->options->replace) && $steps->options->replace == true) ? true : false;
+				$no_add = (isset($steps->options->no_add) && $steps->options->no_add == true) ? true : false;
+				$ignore_slashes = (isset($steps->options->ignore_slashes) && $steps->options->ignore_slashes == true) ? true : false;
 
 				if (isset($import_table) && $import_table !== null && strpos($current_data, '%d') !== false)
 				{
@@ -2099,7 +2103,7 @@ class lng
 				else
 					throw new Exception('Unable to set language string for <em>' . $key . '</em>. It was already set.');
 		}
-		catch (Exception $e)
+		catch(Exception $e)
 		{
 			import_exception::exception_handler($e);
 		}
@@ -2317,7 +2321,7 @@ class template
 					var field = document.getElementById(string);
 					var validate = document.getElementById(\'validate_\' + string);
 					field.className = "invalid_field";
-					validate.innerHTML = "', lng::get('we.imp.invalid'), '";
+					validate.innerHTML = "invalid path, installation not found!";
 					// set the style on the div to invalid
 					var submitBtn = document.getElementById("submit_button");
 					submitBtn.disabled = true;
@@ -2327,7 +2331,7 @@ class template
 					var field = document.getElementById(string);
 					var validate = document.getElementById(\'validate_\' + string);
 					field.className = "valid_field";
-					validate.innerHTML = "', lng::get('we.imp.validated'), '";
+					validate.innerHTML = "installation validated!";
 					var submitBtn = document.getElementById("submit_button");
 					submitBtn.disabled = false;
 				}
