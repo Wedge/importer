@@ -665,15 +665,16 @@ class Importer
 						SELECT COUNT(*)
 						FROM $count");
 					list ($counter) = $db->fetch_row($result2);
-					if (isset($this->count)) $this->count->$substep = $counter;
+					if (isset($this->count))
+						$this->count->$substep = $counter;
 					$db->free_result($result2);
 				}
 
 				// create some handy shortcuts
-				$ignore = (isset($steps->options->ignore) && $steps->options->ignore == true && !isset($steps->options->replace)) ? true : false;
-				$replace = (isset($steps->options->replace) && $steps->options->replace == true) ? true : false;
-				$no_add = (isset($steps->options->no_add) && $steps->options->no_add == true) ? true : false;
-				$ignore_slashes = (isset($steps->options->ignore_slashes) && $steps->options->ignore_slashes == true) ? true : false;
+				$ignore = isset($steps->options->ignore) && ($steps->options->ignore == true) && !isset($steps->options->replace);
+				$replace = isset($steps->options->replace) && ($steps->options->replace == true);
+				$no_add = isset($steps->options->no_add) && ($steps->options->no_add == true);
+				$ignore_slashes = isset($steps->options->ignore_slashes) && ($steps->options->ignore_slashes == true);
 
 				if (isset($import_table) && $import_table !== null && strpos($current_data, '%d') !== false)
 				{
