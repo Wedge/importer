@@ -46,4 +46,6 @@
 	<item name="we.imp.importer_paused"><![CDATA[L'importateur a mis en pause le script pour quelques secondes afin d'éviter la surchauffe. Rassurez-vous, <b>jusqu'ici, tout va bien</b>.]]></item>
 	<item name="we.imp.all_imported"><![CDATA[Maintenant que l'importation est terminée, votre installation de Wedge devrait avoir hérité de toutes les données de votre installation de %s.]]></item>
 	<item name="we.imp.smooth_transition"><![CDATA[Nous espérons que la transition aura été sans souci !]]></item>
+	<item name="we.imp.invalid"><![CDATA[Installation invalide, vérifiez le chemin !]]></item>
+	<item name="we.imp.validated"><![CDATA[Installation valide !]]></item>
 </lang>

@@ -223,7 +223,7 @@ class Importer
 			foreach (explode(',', $this->xml->general->globals) as $global)
 				global $$global;
 
-		//Dirty hack
+		// Dirty hack
 		if (isset($_SESSION['store_globals']))
 			foreach ($_SESSION['store_globals'] as $varname => $value)
 			{
@@ -289,7 +289,7 @@ class Importer
 					$$k = $v;
 			}
 		}
-		// Everything should be alright now... no cross server includes, we hope...
+		// Everything should be alright now... No cross server includes, we hope...
 		require_once($_POST['path_to'] . '/Settings.php');
 		$GLOBALS['boardurl'] = $boardurl;
 		$this->boardurl = $boardurl;
@@ -313,7 +313,7 @@ class Importer
 			// Wedge is UTF8 only, let's set our mysql connection to utf8
 			$db->query('SET NAMES \'utf8\'');
 		}
-		catch(Exception $e)
+		catch (Exception $e)
 		{
 			import_exception::exception_handler($e);
 			die();
@@ -333,19 +333,13 @@ class Importer
 			eval($this->xml->general->custom_functions);
 
 		if (isset($this->xml->general->variables))
-		{
 			foreach ($this->xml->general->variables as $eval_me)
 				eval($eval_me);
-		}
 
 		if (isset($this->xml->general->settings))
-		{
 			foreach ($this->xml->general->settings as $file)
-			{
 				if (file_exists($_POST['path_from'] . $file))
 					require_once($_POST['path_from'] . $file);
-			}
-		}
 
 		if (isset($this->xml->general->from_prefix))
 		{
@@ -2105,7 +2099,7 @@ class lng
 				else
 					throw new Exception('Unable to set language string for <em>' . $key . '</em>. It was already set.');
 		}
-		catch(Exception $e)
+		catch (Exception $e)
 		{
 			import_exception::exception_handler($e);
 		}
@@ -2323,7 +2317,7 @@ class template
 					var field = document.getElementById(string);
 					var validate = document.getElementById(\'validate_\' + string);
 					field.className = "invalid_field";
-					validate.innerHTML = "invalid path, installation not found!";
+					validate.innerHTML = "', lng::get('we.imp.invalid'), '";
 					// set the style on the div to invalid
 					var submitBtn = document.getElementById("submit_button");
 					submitBtn.disabled = true;
@@ -2333,7 +2327,7 @@ class template
 					var field = document.getElementById(string);
 					var validate = document.getElementById(\'validate_\' + string);
 					field.className = "valid_field";
-					validate.innerHTML = "installation validated!";
+					validate.innerHTML = "', lng::get('we.imp.validated'), '";
 					var submitBtn = document.getElementById("submit_button");
 					submitBtn.disabled = false;
 				}
