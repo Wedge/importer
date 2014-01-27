@@ -18,8 +18,7 @@ First, install Wedge:
 - Go to http://github.com/Wedge/wedge/
 - Download ZIP
 - Unzip, FTP the contents to your server.
-- Copy the contents of the `install` folder to your forum root. (`mysite.com/myforum/`)
-- Go to your forum root with your browser. If you don't see anything, visit `mysite.com/myforum/install.php` specifically.
+- Go to your forum root with your browser. If you don't see anything, visit `mysite.com/myforum/index.php` specifically.
 - Follow the instructions.
 
 Then, install the importer:
@@ -31,5 +30,6 @@ Then, install the importer:
 - Follow the instructions.
 - Done! You now have two working forums: a SMF 2.0 forum, and a version of it running Wedge.
 
-Please note that currently, attachments, avatars and Aeva Media galleries are NOT imported.
-This shall be fixed in the future.
+Please note that currently, Aeva Media galleries are NOT imported.
+Also, attachments aren't imported if they're located in custom attachment folders.
+This should hopefully be fixed in the future.
