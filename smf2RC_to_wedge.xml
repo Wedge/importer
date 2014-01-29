@@ -40,7 +40,6 @@
 				'attachmentThumbnails',
 				'attachmentThumbWidth',
 				'attachmentThumbHeight',
-				'attachmentUploadDir',
 				'censorIgnoreCase',
 				'mostOnline',
 				'mostOnlineToday',

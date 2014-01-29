@@ -40,7 +40,6 @@
 				'attachmentThumbnails',
 				'attachmentThumbWidth',
 				'attachmentThumbHeight',
-				'attachmentUploadDir',
 				'censorIgnoreCase',
 				'mostOnline',
 				'mostOnlineToday',
@@ -367,7 +366,7 @@
 		<destination>{$to_prefix}messages</destination>
 		<presql>TRUNCATE {$to_prefix}messages;</presql>
 		<options>
-			<limit>100</limit>
+			<limit>250</limit>
 		</options>
 		<query>
 			SELECT

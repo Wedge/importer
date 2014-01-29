@@ -358,7 +358,7 @@ class Importer
 				SELECT COUNT(*)
 				FROM " . eval('return "' . $this->xml->general->table_test . '";'), true);
 			if ($result === false)
-				$this->doStep0(lng::get('we.imp.permission_denied') . mysql_error(), (string) $this->xml->general->name);
+				$this->doStep0(lng::get('we.imp.permission_denied') . mysqli_error($db->con), (string) $this->xml->general->name);
 
 			$db->free_result($result);
 		}
@@ -1301,7 +1301,7 @@ class Importer
 					INSERT INTO {$to_prefix}categories
 						(name)
 					VALUES ('General Category')");
-				$catch_cat = mysql_insert_id();
+				$catch_cat = mysqli_insert_id($db->con);
 
 				$db->query("
 					UPDATE {$to_prefix}boards
@@ -1700,12 +1700,13 @@ abstract class helper
 
 class Database
 {
+	var $con;
+
 	public function __construct($db_server, $db_user, $db_password, $db_persist)
 	{
-		if ($db_persist == 1)
-			$this->con = mysql_pconnect ($db_server, $db_user, $db_password) or die (mysql_error());
-		else
-			$this->con = mysql_connect ($db_server, $db_user, $db_password) or die (mysql_error());
+		$this->con = mysqli_connect(($db_persist == 1 ? 'p:' : '') . $db_server, $db_user, $db_password);
+		if (mysqli_connect_error())
+			die('Database error: ' . mysqli_connect_error());
 	}
 
 	private function removeAttachments()
@@ -1755,28 +1756,28 @@ class Database
 		if (trim($string) == 'TRUNCATE ' . $GLOBALS['to_prefix'] . 'attachments;')
 			$this->removeAttachments();
 
-		$result = @mysql_query($string);
+		$result = @mysqli_query($this->con, $string);
 
 		if ($result !== false || $return_error)
 			return $result;
 
-		$mysql_error = mysql_error();
-		$mysql_errno = mysql_errno();
+		$mysql_error = mysqli_error($this->con);
+		$mysql_errno = mysqli_errno($this->con);
 
 		if ($mysql_errno == 1016)
 		{
 			if (preg_match('~(?:\'([^\.\']+)~', $mysql_error, $match) != 0 && !empty($match[1]))
-				mysql_query("
+				mysqli_query($this->con, "
 					REPAIR TABLE $match[1]");
 
-			$result = mysql_query($string);
+			$result = mysqli_query($this->con, $string);
 
 			if ($result !== false)
 				return $result;
 		}
 		elseif ($mysql_errno == 2013)
 		{
-			$result = mysql_query($string);
+			$result = mysqli_query($this->con, $string);
 
 			if ($result !== false)
 				return $result;
@@ -1807,26 +1808,26 @@ class Database
 
 	public function free_result($result)
 	{
-		mysql_free_result($result);
+		mysqli_free_result($result);
 	}
 
 	public function fetch_assoc($result)
 	{
-		return mysql_fetch_assoc($result);
+		return mysqli_fetch_assoc($result);
 	}
 
 	public function fetch_row($result)
 	{
-		return mysql_fetch_row($result);
+		return mysqli_fetch_row($result);
 	}
 
 	public function num_rows($result)
 	{
-		return mysql_num_rows($result);
+		return mysqli_num_rows($result);
 	}
 	public function insert_id()
 	{
-		return mysql_insert_id();
+		return mysqli_insert_id($this->con);
 	}
 
 	public function alter_table($tableName, $knownKeys = '', $knownColumns = '', $alterColumns = '', $reverseKeys = false, $reverseColumns = false, $return_error = false)
@@ -2302,7 +2303,7 @@ class template
 			function validateField(string)
 			{
 				var target = document.getElementById(string);
-				var from = "', isset($import->xml->general->settings) ? $import->xml->general->settings : 'null', '";
+				var from = "', !empty($import->xml->general->settings) ? $import->xml->general->settings : 'null', '";
 				var to = "/Settings.php";
 				var url = "import.php?xml=true&" + string + "=" + target.value.replace(/\/+$/g, "") + (string == "path_to" ? to : from);
 				var ajax = new AJAXCall(url, validateCallback, string);
