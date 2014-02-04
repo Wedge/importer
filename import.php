@@ -2,10 +2,11 @@
 /**
  * Wedge importer engine
  *
- * This file deals with importing data to wedge forum software.
+ * This file deals with importing data to Wedge forum software.
  *
- * @package wedge importer
+ * @package Wedge importer
  * @copyright 2010-2011 Thorsten "TE" Eurich, wedge.org
+ * @author Thorsten Eurich, René-Gilles Deberdt
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -25,7 +26,7 @@ $cookie = new Cookie();
 $import = new Importer();
 $template = new template();
 
-// XML ajax feedback? We can just skip everything else
+// XML Ajax feedback? We can just skip everything else
 if (isset($_GET['xml']))
 {
 	$template->xml();
@@ -363,16 +364,16 @@ class Importer
 			$db->free_result($result);
 		}
 
-		$results = $db->query("SELECT @@SQL_BIG_SELECTS, @@SQL_MAX_JOIN_SIZE");
+		$results = $db->query("SELECT @@SQL_BIG_SELECTS, @@MAX_JOIN_SIZE");
 		list ($big_selects, $sql_max_join) = $db->fetch_row($results);
 
-		// Only waste a query if its worth it.
+		// Only waste a query if it's worth it.
 		if (empty($big_selects) || ($big_selects != 1 && $big_selects != '1'))
 			$db->query("SET @@SQL_BIG_SELECTS = 1");
 
-		// Lets set MAX_JOIN_SIZE to something we should
+		// Let's set MAX_JOIN_SIZE to something we should.
 		if (empty($sql_max_join) || ($sql_max_join == '18446744073709551615' && $sql_max_join == '18446744073709551615'))
-			$db->query("SET @@SQL_MAX_JOIN_SIZE = 18446744073709551615");
+			$db->query("SET @@MAX_JOIN_SIZE = 18446744073709551615");
 	}
 
 	// Looks at the importer and returns the steps that it's able to make.
