@@ -4,12 +4,10 @@
  *
  * This file deals with importing data to Wedge forum software.
  *
- * @package Wedge importer
- * @copyright 2010-2011 Thorsten "TE" Eurich, wedge.org
- * @author Thorsten Eurich, René-Gilles Deberdt
- * @license http://wedge.org/license/
- *
- * @version 0.1
+ * Wedge (http://wedge.org)
+ * Copyright © 2014 Thorsten Eurich, René-Gilles Deberdt, wedge.org
+ * Note: this particular file, and its associated XML import files,
+ *       are released under the 3-clause BSD license.
  */
 
 // Buy some time
