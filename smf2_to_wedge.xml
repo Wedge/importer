@@ -285,8 +285,8 @@
 					FROM {$from_prefix}settings
 					WHERE variable='attachmentUploadDir';");
 				list ($smf_attachments_dir) = $db->fetch_row($request);
+				$db->free_result($request);
 			}
-			$db->free_result($request);
 
 			if ($avatarUploadDir == $attachmentUploadDir)
 				$row['attachment_type'] = 0;
