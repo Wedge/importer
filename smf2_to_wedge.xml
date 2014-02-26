@@ -212,7 +212,7 @@
 				'modset' => $row['mod_prefs'],
 			);
 			if (!empty($row['secret_question']))
-				$data['secret'] => $row['secret_question'] . '|' . $row['secret_answer'];
+				$data['secret'] = $row['secret_question'] . '|' . $row['secret_answer'];
 
 			$row['data'] = serialize($data);
 
@@ -221,7 +221,7 @@
 		<query>
 			SELECT
 				id_member, member_name, date_registered, posts, id_group, lngfile, last_login,
-				real_name, instant_messages, unread_messages, new_pm, buddy_list, pm_ignore_list,
+				real_name, instant_messages, unread_messages, buddy_list, pm_ignore_list,
 				pm_prefs, passwd, email_address, personal_text, gender, birthdate,
 				website_url, website_title, location, hide_email, show_online,
 				time_format, signature, time_offset, avatar, pm_email_notify,
