@@ -525,6 +525,15 @@
 		<options>
 			<replace>true</replace>
 		</options>
+		<preparsecode>
+			if (!empty($row['online_color']))
+			{
+				if ($row['online_color'] == '#FF0000') // admin's shiny red?
+					$row['online_color'] =  '#d2653a'; // subdued red is better.
+				if ($row['online_color'] == '#0000FF') // global mod's bright blue?
+					$row['online_color'] =  '#c18933'; // light brown is better.
+			}
+		</preparsecode>
 		<query>
 			SELECT
 				id_group, group_name, description, online_color, min_posts,

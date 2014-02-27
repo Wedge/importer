@@ -2054,7 +2054,7 @@ class Charset
 			$buf = mb_decode_numericentity($buf, array(0x80, 0x2ffff, 0, 0xffff), 'UTF-8');
 		else
 		{
-			// Take care of html entities..
+			// Take care of HTML entities
 			$entity_replace = create_function('$num', '
 				return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) ? \'\' :
 					  ($num < 0x80 ? \'&#\' . $num . \';\' : ($num < 0x800 ? chr(192 | $num >> 6) . chr(128 | $num & 63) :
@@ -2065,7 +2065,7 @@ class Charset
 			$buf = preg_replace('~(&#x(\d{1,7}|x[0-9a-fA-F]{1,6});)~e', '$entity_replace(0x\\2)', $buf);
 		}
 
-		// surprise, surprise... the string
+		// Surprise, surprise... The string.
 		return $buf;
 	}
 }
@@ -2945,5 +2945,3 @@ class Cookie
 		return true;
 	}
 }
-
-?>
