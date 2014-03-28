@@ -370,17 +370,6 @@
 		</query>
 	</step>
 	<step>
-		<title>Importing mark read data (boards)</title>
-		<detect>{$from_prefix}log_boards</detect>
-		<destination>{$to_prefix}log_boards</destination>
-		<presql>TRUNCATE {$to_prefix}log_boards;</presql>
-		<query>
-			SELECT
-				ID_MEMBER AS id_member, ID_BOARD AS id_board, ID_MSG AS id_msg
-			FROM {$from_prefix}log_boards;
-		</query>
-	</step>
-	<step>
 		<title>Importing mark read data (topics)</title>
 		<detect>{$from_prefix}log_topics</detect>
 		<destination>{$to_prefix}log_topics</destination>

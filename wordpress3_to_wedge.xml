@@ -92,7 +92,6 @@
 		<presql>
 			TRUNCATE {$to_prefix}topics;
 			TRUNCATE {$to_prefix}log_topics;
-			TRUNCATE {$to_prefix}log_boards;
 			TRUNCATE {$to_prefix}log_mark_read;
 			TRUNCATE {$to_prefix}polls;
 			TRUNCATE {$to_prefix}poll_choices;
