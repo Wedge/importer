@@ -409,6 +409,17 @@
 		<options>
 			<replace>true</replace>
 		</options>
+		<preparsecode>
+			if (!empty($row['online_color']))
+			{
+				if ($row['online_color'] == '#FF0000') // admin's shiny red?
+					$row['online_color'] =  '#d2653a'; // subdued red is better.
+				if ($row['online_color'] == '#0000FF') // global mod's bright blue?
+					$row['online_color'] =  '#c18933'; // light brown is better.
+			}
+			if (!empty($row['stars']))
+				$row['stars'] = str_replace('#star', '#rank', $row['stars']);
+		</preparsecode>
 		<query>
 			SELECT
 				ID_GROUP AS id_group, groupName AS group_name, '' AS description, 

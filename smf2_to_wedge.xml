@@ -522,6 +522,8 @@
 				if ($row['online_color'] == '#0000FF') // global mod's bright blue?
 					$row['online_color'] =  '#c18933'; // light brown is better.
 			}
+			if (!empty($row['stars']))
+				$row['stars'] = str_replace('#star', '#rank', $row['stars']);
 		</preparsecode>
 		<query>
 			SELECT
