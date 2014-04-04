@@ -196,10 +196,8 @@ class Importer
 
 		if (count($scripts) == 1)
 		{
-			$_SESSION['import_script'] = basename($scripts[0]['path']);
-			if (substr($_SESSION['import_script'], -4) == '.xml')
-				$this->preparse_xml(dirname(__FILE__) . '/' . $_SESSION['import_script']);
-			return false;
+			header('Location: ' . $_SERVER['PHP_SELF'] . '?import_script=' . basename($scripts[0]['path']));
+			exit;
 		}
 
 		$template->select_script($scripts);
