@@ -111,14 +111,14 @@ class Importer
 		elseif (isset($_SESSION['import_db_pass']))
 			$_POST['db_pass'] = $_SESSION['import_db_pass'];
 
-		if (isset($_SESSION['import_paths']) && !isset($_POST['path_from']) && !isset($_POST['path_to']))
+		if (isset($_SESSION['import_paths']) && !isset($_POST['path_from'], $_POST['path_to']))
 			list ($_POST['path_from'], $_POST['path_to']) = $_SESSION['import_paths'];
 		elseif (isset($_POST['path_from']) || isset($_POST['path_to']))
 		{
 			if (isset($_POST['path_from']))
-				$_POST['path_from'] = rtrim($_POST['path_from'], '/');
+				$_POST['path_from'] = rtrim($_POST['path_from'], '/\\');
 			if (isset($_POST['path_to']))
-				$_POST['path_to'] = rtrim($_POST['path_to'], '/');
+				$_POST['path_to'] = rtrim($_POST['path_to'], '/\\');
 
 			$_SESSION['import_paths'] = array(@$_POST['path_from'], @$_POST['path_to']);
 		}
@@ -137,7 +137,7 @@ class Importer
 		try
 		{
 			if (!$this->xml = simplexml_load_file($file, 'SimpleXMLElement', LIBXML_NOCDATA))
-				throw new import_exception('XML-Syntax error in file: ' . $file);
+				throw new import_exception('XML syntax error in file: ' . $file);
 
 			$this->xml = simplexml_load_file($file, 'SimpleXMLElement', LIBXML_NOCDATA);
 		}
@@ -486,7 +486,7 @@ class Importer
 		if ($this->detect_scripts())
 			return true;
 
-		// If these aren't set (from an error..) default to the current directory.
+		// If these aren't set (from an error..?), default to the current directory.
 		if (!isset($_POST['path_from']))
 			$_POST['path_from'] = dirname(__FILE__);
 		if (!isset($_POST['path_to']))
