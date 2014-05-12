@@ -604,19 +604,12 @@
 		<code>
 			$request = $db->query("
 				SELECT value
-				FROM {$to_prefix}settings
-				WHERE variable='smileys_dir';");
-			list ($we_smileys_dir) = $db->fetch_row($request);
-			$db->free_result($request);
-
-			$request = $db->query("
-				SELECT value
 				FROM {$from_prefix}settings
 				WHERE variable='smileys_dir';");
 			list ($smf_smileys_dir) = $db->fetch_row($request);
 			$db->free_result($request);
 
-			helper::copy_smileys($smf_smileys_dir, $we_smileys_dir);
+			helper::copy_smileys($smf_smileys_dir);
 		</code>
 	</step>
 	

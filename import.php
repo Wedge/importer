@@ -1618,11 +1618,12 @@ abstract class helper
 		return $new_var;
 	}
 
-	public static function copy_smileys($source, $dest)
+	public static function copy_smileys($source)
 	{
 		if (!is_dir($source) || !($dir = opendir($source)))
 			return;
 
+		$dest = dirname(__FILE__) . '/assets/smileys';
 		while ($file = readdir($dir))
 		{
 			if ($file == '.' || $file == '..')
